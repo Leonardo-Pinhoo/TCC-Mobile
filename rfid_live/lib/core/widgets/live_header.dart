@@ -37,7 +37,10 @@ class _LiveClockState extends State<LiveClock> {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
+    return Semantics(
+      label: 'Hora atual ${Fmt.clock(_now)}',
+      excludeSemantics: true,
+      child: Text(
       Fmt.clock(_now),
       style: widget.style ??
           const TextStyle(
@@ -47,6 +50,7 @@ class _LiveClockState extends State<LiveClock> {
             letterSpacing: 0.5,
             color: AppColors.textSecondary,
           ),
+      ),
     );
   }
 }
@@ -141,7 +145,7 @@ class _RefreshButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    final Widget button = Material(
       color: AppColors.primary,
       borderRadius: BorderRadius.circular(8),
       child: InkWell(
@@ -175,6 +179,15 @@ class _RefreshButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+    return Semantics(
+      label: refreshing
+          ? 'Atualizando leituras das antenas'
+          : 'Atualizar leituras das antenas',
+      button: true,
+      enabled: !refreshing,
+      excludeSemantics: true,
+      child: button,
     );
   }
 }

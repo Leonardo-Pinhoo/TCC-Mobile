@@ -23,7 +23,7 @@ class DistributionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double ratio = total == 0 ? 0 : value / total;
-    return Padding(
+    final Widget row = Padding(
       padding: const EdgeInsets.symmetric(vertical: 7),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,6 +70,13 @@ class DistributionRow extends StatelessWidget {
         ],
       ),
     );
+    // O leitor de tela receberia "Em uso", "2" e uma barra sem rótulo:
+    // uma leitura única descreve a linha inteira.
+    return Semantics(
+      label: '$label: $value de $total ferramentas',
+      excludeSemantics: true,
+      child: row,
+    );
   }
 }
 
@@ -92,7 +99,7 @@ class MetricRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    final Widget ring = SizedBox(
       width: size,
       height: size,
       child: TweenAnimationBuilder<double>(
@@ -134,6 +141,12 @@ class MetricRing extends StatelessWidget {
           );
         },
       ),
+    );
+    // O anel é pintado em canvas — sem rótulo não existe para a acessibilidade.
+    return Semantics(
+      label: '$label: $value',
+      excludeSemantics: true,
+      child: ring,
     );
   }
 }
@@ -189,8 +202,11 @@ class HourlyBarChart extends StatelessWidget {
     final int maxValue =
         values.isEmpty ? 0 : values.reduce((int a, int b) => a > b ? a : b);
     final int nowHour = DateTime.now().hour;
+    final int totalMovements =
+        values.fold<int>(0, (int sum, int value) => sum + value);
+    final int peakHour = maxValue == 0 ? 0 : values.indexOf(maxValue);
 
-    return SizedBox(
+    final Widget chart = SizedBox(
       height: height,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -238,6 +254,15 @@ class HourlyBarChart extends StatelessWidget {
         }),
       ),
     );
+    // Resume o histograma: total do dia e horário de pico.
+    return Semantics(
+      label: maxValue == 0
+          ? 'Movimentações por hora: nenhuma movimentação registrada hoje'
+          : 'Movimentações por hora: $totalMovements no dia, '
+              'pico de $maxValue às ${peakHour.toString().padLeft(2, '0')}h',
+      excludeSemantics: true,
+      child: chart,
+    );
   }
 }
 
@@ -261,7 +286,7 @@ class RankingBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double ratio = maxValue == 0 ? 0 : value / maxValue;
-    return Padding(
+    final Widget bar = Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,6 +335,11 @@ class RankingBar extends StatelessWidget {
           ),
         ],
       ),
+    );
+    return Semantics(
+      label: '$label: $value — $caption',
+      excludeSemantics: true,
+      child: bar,
     );
   }
 }

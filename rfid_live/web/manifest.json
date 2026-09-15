@@ -1,11 +1,11 @@
 {
-    "name": "dart_flutter",
-    "short_name": "dart_flutter",
+    "name": "RFID Live",
+    "short_name": "RFID Live",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Rastreamento inteligente de ferramentas industriais por etiquetas RFID.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -92,8 +92,16 @@ class _BottomNav extends StatelessWidget {
               final bool active = i == index;
               final Color color =
                   active ? AppColors.primary : AppColors.textMuted;
+              final String semanticLabel = i == 3 && alertCount > 0
+                  ? '${item.label}, $alertCount ativos'
+                  : item.label;
               return Expanded(
-                child: InkWell(
+                child: Semantics(
+                  label: semanticLabel,
+                  selected: active,
+                  button: true,
+                  excludeSemantics: true,
+                  child: InkWell(
                   onTap: () => onChanged(i),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -136,6 +144,7 @@ class _BottomNav extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
                 ),
               );
             }),

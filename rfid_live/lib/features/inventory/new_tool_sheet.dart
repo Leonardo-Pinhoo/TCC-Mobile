@@ -8,6 +8,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/models/tool.dart';
 import '../../data/models/zone.dart';
+import '../../data/repositories/plant_repository.dart';
 import '../../state/auth_controller.dart';
 import '../../state/plant_controller.dart';
 import '../auth/widgets/auth_scaffold.dart';
@@ -51,7 +52,32 @@ class _NewToolSheetState extends State<_NewToolSheet> {
   @override
   void initState() {
     super.initState();
-    _tag.text = _generateTag();
+    _tag.text = _freshTag();
+  }
+
+  /// Sorteia um EPC que ainda não esteja vinculado a nenhuma ferramenta.
+  String _freshTag() {
+    final PlantController plant = context.read<PlantController>();
+    String tag = _generateTag();
+    for (int attempt = 0; attempt < 20 && plant.toolByTag(tag) != null; attempt++) {
+      tag = _generateTag();
+    }
+    return tag;
+  }
+
+  /// O EPC identifica a etiqueta na planta: precisa ser hexadecimal, estar no
+  /// formato lido pelas antenas e não pode repetir outra ferramenta.
+  String? _validateTag(String? value) {
+    final String tag = (value ?? '').trim().toUpperCase();
+    if (tag.isEmpty) return 'Informe o EPC da etiqueta';
+    if (!PlantRepository.isValidEpc(tag)) {
+      return 'Formato inválido. Use E2:XX:XX:XX (hexadecimal)';
+    }
+    final Tool? duplicate = context.read<PlantController>().toolByTag(tag);
+    if (duplicate != null) {
+      return 'EPC já vinculado a ${duplicate.id} — ${duplicate.name}';
+    }
+    return null;
   }
 
   @override
@@ -73,17 +99,30 @@ class _NewToolSheetState extends State<_NewToolSheet> {
     if (!_formKey.currentState!.validate()) return;
     final PlantController plant = context.read<PlantController>();
     final String user = context.read<AuthController>().user?.name ?? 'Operador';
-    final Tool tool = plant.addTool(
-      name: _name.text.trim(),
-      tag: _tag.text.trim().toUpperCase(),
-      zoneId: _zoneId,
-      category: _category,
-      assetValue: double.tryParse(_value.text.replaceAll(',', '.')) ?? 0,
-      criticality: _criticality,
-      user: user,
-    );
-    Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
+
+    // Capturados antes do pop: depois de fechar a folha este contexto já não
+    // pode ser usado para localizar o ScaffoldMessenger.
+    final NavigatorState navigator = Navigator.of(context);
+    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+
+    final Tool tool;
+    try {
+      tool = plant.addTool(
+        name: _name.text.trim(),
+        tag: _tag.text.trim().toUpperCase(),
+        zoneId: _zoneId,
+        category: _category,
+        assetValue: double.tryParse(_value.text.replaceAll(',', '.')) ?? 0,
+        criticality: _criticality,
+        user: user,
+      );
+    } on PlantException catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(e.message)));
+      return;
+    }
+
+    navigator.pop();
+    messenger.showSnackBar(
       SnackBar(content: Text('${tool.name} cadastrada como ${tool.id}.')),
     );
   }
@@ -134,14 +173,14 @@ class _NewToolSheetState extends State<_NewToolSheet> {
                       fontFamily: AppText.mono,
                     ),
                     inputFormatters: <TextInputFormatter>[
-                      LengthLimitingTextInputFormatter(17),
+                      LengthLimitingTextInputFormatter(11),
                     ],
                     decoration: InputDecoration(
                       hintText: 'E2:00:1A:B3',
                       suffixIcon: IconButton(
                         tooltip: 'Gerar novo EPC',
                         onPressed: () =>
-                            setState(() => _tag.text = _generateTag()),
+                            setState(() => _tag.text = _freshTag()),
                         icon: const Icon(
                           Icons.autorenew,
                           size: 19,
@@ -149,8 +188,7 @@ class _NewToolSheetState extends State<_NewToolSheet> {
                         ),
                       ),
                     ),
-                    validator: (String? value) =>
-                        (value ?? '').trim().length < 6 ? 'EPC inválido' : null,
+                    validator: _validateTag,
                   ),
                 ),
                 const SizedBox(height: 14),

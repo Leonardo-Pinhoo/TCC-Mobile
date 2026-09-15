@@ -1,4 +1,4 @@
-package com.example.dart_flutter
+package br.com.rfidlive.app
 
 import io.flutter.embedding.android.FlutterActivity
 

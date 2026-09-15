@@ -177,7 +177,11 @@ class _ProfileButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final String initials =
         context.select<AuthController, String>((AuthController c) => c.user?.initials ?? '?');
-    return GestureDetector(
+    return Semantics(
+      label: 'Conta e status das antenas',
+      button: true,
+      excludeSemantics: true,
+      child: GestureDetector(
       onTap: () => showProfileSheet(context),
       child: Row(
         children: <Widget>[
@@ -199,6 +203,7 @@ class _ProfileButton extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

@@ -7,6 +7,15 @@ import '../models/tool.dart';
 import '../models/zone.dart';
 import '../seed_data.dart';
 
+/// Violação de uma regra de negócio do middleware RFID.
+class PlantException implements Exception {
+  PlantException(this.message);
+  final String message;
+
+  @override
+  String toString() => message;
+}
+
 /// Uma leitura bruta de etiqueta capturada por uma antena.
 class TagReading {
   TagReading({
@@ -101,6 +110,22 @@ class PlantRepository {
   Tool? toolById(String id) {
     for (final Tool tool in _tools) {
       if (tool.id == id) return tool;
+    }
+    return null;
+  }
+
+  /// Formato canônico do EPC lido pelas antenas: `E2:XX:XX:XX` em hexadecimal.
+  static final RegExp epcPattern = RegExp(r'^E2(:[0-9A-F]{2}){3}$');
+
+  static bool isValidEpc(String tag) =>
+      epcPattern.hasMatch(tag.trim().toUpperCase());
+
+  /// Busca a ferramenta dona de um EPC. O EPC é único na planta: duas
+  /// etiquetas com o mesmo código tornariam a leitura das antenas ambígua.
+  Tool? toolByTag(String tag) {
+    final String normalized = tag.trim().toUpperCase();
+    for (final Tool tool in _tools) {
+      if (tool.tag.toUpperCase() == normalized) return tool;
     }
     return null;
   }
@@ -225,6 +250,19 @@ class PlantRepository {
   String _nextId(String prefix) {
     _sequence++;
     return '$prefix-${_sequence.toString().padLeft(3, '0')}';
+  }
+
+  /// Próximo código patrimonial livre, derivado do maior `FER-xxx` existente.
+  ///
+  /// Contar a lista (`length + 1`) reaproveitaria um código já usado assim que
+  /// uma ferramenta fosse baixada do inventário.
+  String _nextToolId() {
+    int highest = 0;
+    for (final Tool tool in _tools) {
+      final int? number = int.tryParse(tool.id.split('-').last);
+      if (number != null && number > highest) highest = number;
+    }
+    return 'FER-${(highest + 1).toString().padLeft(3, '0')}';
   }
 
   void _replaceTool(Tool updated) {
@@ -396,11 +434,22 @@ class PlantRepository {
     required String user,
   }) {
     final DateTime now = DateTime.now();
-    final int nextNumber = _tools.length + 1;
+    final String normalizedTag = tag.trim().toUpperCase();
+
+    if (!isValidEpc(normalizedTag)) {
+      throw PlantException('EPC inválido. Use o formato E2:XX:XX:XX.');
+    }
+    final Tool? duplicate = toolByTag(normalizedTag);
+    if (duplicate != null) {
+      throw PlantException(
+        'O EPC $normalizedTag já está vinculado a ${duplicate.id}.',
+      );
+    }
+
     final Tool tool = Tool(
-      id: 'FER-${nextNumber.toString().padLeft(3, '0')}',
+      id: _nextToolId(),
       name: name,
-      tag: tag,
+      tag: normalizedTag,
       status: zoneById(zoneId).kind == ZoneKind.storage
           ? ToolStatus.available
           : ToolStatus.inUse,

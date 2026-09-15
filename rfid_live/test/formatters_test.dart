@@ -1,4 +1,4 @@
-import 'package:dart_flutter/core/utils/formatters.dart';
+import 'package:rfid_live/core/utils/formatters.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

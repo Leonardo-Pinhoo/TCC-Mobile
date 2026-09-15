@@ -1,9 +1,9 @@
 import 'dart:math';
 
-import 'package:dart_flutter/data/models/movement.dart';
-import 'package:dart_flutter/data/models/plant_alert.dart';
-import 'package:dart_flutter/data/models/tool.dart';
-import 'package:dart_flutter/data/repositories/plant_repository.dart';
+import 'package:rfid_live/data/models/movement.dart';
+import 'package:rfid_live/data/models/plant_alert.dart';
+import 'package:rfid_live/data/models/tool.dart';
+import 'package:rfid_live/data/repositories/plant_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -182,6 +182,101 @@ void main() {
       expect(tool.status, ToolStatus.available);
       expect(repository.tools, hasLength(7));
       expect(repository.movements.first.type, MovementType.register);
+    });
+
+    test('cadastrar normaliza o EPC para maiúsculas', () {
+      final Tool tool = repository.addTool(
+        name: 'Chave Allen 5mm',
+        tag: 'e2:00:aa:0f',
+        zoneId: 'ZN-005',
+        category: 'Manual',
+        assetValue: 90,
+        criticality: 'Baixa',
+        user: 'Ana R.',
+      );
+
+      expect(tool.tag, 'E2:00:AA:0F');
+      expect(repository.toolByTag('e2:00:aa:0f')?.id, tool.id);
+    });
+
+    test('o EPC é único: não permite duas etiquetas com o mesmo código', () {
+      final String existing = repository.tools.first.tag;
+
+      expect(
+        () => repository.addTool(
+          name: 'Cópia indevida',
+          tag: existing,
+          zoneId: 'ZN-005',
+          category: 'Manual',
+          assetValue: 100,
+          criticality: 'Baixa',
+          user: 'Ana R.',
+        ),
+        throwsA(isA<PlantException>()),
+      );
+      expect(repository.tools, hasLength(6));
+    });
+
+    test('EPC fora do formato das antenas é recusado', () {
+      for (final String invalid in <String>[
+        'ABC',
+        'E2:00:1A',
+        'E2:00:1A:G6',
+        'E3:00:1A:B4',
+      ]) {
+        expect(
+          () => repository.addTool(
+            name: 'Etiqueta inválida',
+            tag: invalid,
+            zoneId: 'ZN-005',
+            category: 'Manual',
+            assetValue: 100,
+            criticality: 'Baixa',
+            user: 'Ana R.',
+          ),
+          throwsA(isA<PlantException>()),
+          reason: invalid,
+        );
+      }
+      expect(repository.tools, hasLength(6));
+    });
+
+    test('todo EPC do inventário inicial é hexadecimal válido', () {
+      for (final Tool tool in repository.tools) {
+        expect(
+          PlantRepository.isValidEpc(tool.tag),
+          isTrue,
+          reason: '${tool.id} carrega o EPC ${tool.tag}',
+        );
+      }
+    });
+
+    test('o código patrimonial nunca é reaproveitado', () {
+      final Tool first = repository.addTool(
+        name: 'Ferramenta A',
+        tag: 'E2:00:B1:01',
+        zoneId: 'ZN-005',
+        category: 'Manual',
+        assetValue: 100,
+        criticality: 'Baixa',
+        user: 'Ana R.',
+      );
+      final Tool second = repository.addTool(
+        name: 'Ferramenta B',
+        tag: 'E2:00:B1:02',
+        zoneId: 'ZN-005',
+        category: 'Manual',
+        assetValue: 100,
+        criticality: 'Baixa',
+        user: 'Ana R.',
+      );
+
+      expect(first.id, 'FER-007');
+      expect(second.id, 'FER-008');
+      expect(
+        repository.tools.map((Tool t) => t.id).toSet(),
+        hasLength(repository.tools.length),
+      );
     });
 
     test('resolver alertas remove-os da lista de ativos', () {

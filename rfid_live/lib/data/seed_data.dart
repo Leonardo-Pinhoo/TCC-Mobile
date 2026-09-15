@@ -55,7 +55,7 @@ class SeedData {
         Tool(
           id: 'FER-004',
           name: 'Multímetro Digital Fluke',
-          tag: 'E2:00:4A:G6',
+          tag: 'E2:00:4A:C6',
           status: ToolStatus.missing,
           zoneId: null,
           lastRead: now.subtract(const Duration(hours: 6)),

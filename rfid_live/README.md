@@ -30,6 +30,12 @@ alertas e indicadores de BI.
   prontidão, visibilidade das etiquetas e exposição financeira sem rastreio.
 - Interface 100% em português, tema escuro industrial, pull-to-refresh, estados vazios
   e validação em todos os formulários.
+- **Acessibilidade**: KPIs, anéis de BI, histograma e barras de ranking são desenhados em
+  canvas e receberam rótulos semânticos, para que um leitor de tela leia "Utilização: 33%"
+  em vez de ignorar o gráfico. As abas anunciam nome e seleção.
+- **Integridade da etiqueta**: o EPC é único na planta e validado no formato `E2:XX:XX:XX`
+  (hexadecimal) — duas etiquetas com o mesmo código tornariam a leitura das antenas
+  ambígua.
 
 ---
 
@@ -79,7 +85,7 @@ flutter doctor --android-licenses
 ### 3.3 Baixar as dependências do projeto
 
 ```bash
-cd dart_flutter
+cd rfid_live
 flutter pub get
 ```
 
@@ -118,7 +124,20 @@ Senha:  123456
 Na tela de login há o botão **"Preencher acesso de demonstração"**.
 Também é possível criar uma conta nova pela opção **Criar nova conta**.
 
-### 3.6 Gerar o APK para entrega
+### 3.6 Identidade do aplicativo
+
+| Onde | Valor |
+|------|-------|
+| Nome exibido (Android/iOS/Web) | **RFID Live** |
+| Package / Application ID | `br.com.rfidlive.app` |
+| Bundle Identifier (iOS) | `br.com.rfidlive.app` |
+| Nome do pacote Dart | `rfid_live` |
+
+> O aplicativo não usa GPS: o `AndroidManifest.xml` não declara nenhuma permissão de
+> localização. As permissões `ACCESS_FINE_LOCATION`/`ACCESS_COARSE_LOCATION` que existiam
+> eram resíduo dos exercícios em `examples/` e foram removidas.
+
+### 3.7 Gerar o APK para entrega
 
 ```bash
 flutter build apk --release
@@ -133,19 +152,24 @@ Para publicar na Play Store use `flutter build appbundle --release`.
 
 ```bash
 flutter analyze   # análise estática — deve terminar com "No issues found!"
-flutter test      # 43 testes automatizados
+flutter test      # 51 testes automatizados
 ```
 
 Cobertura da suíte:
 
 - `test/plant_repository_test.dart` — regras de negócio: inventário inicial, busca,
   movimentações, manutenção, localização por antena, cadastro, alertas e 500 ciclos da
-  simulação em tempo real verificando a consistência dos dados.
+  simulação em tempo real verificando a consistência dos dados. Inclui as regras da
+  etiqueta: o EPC é único na planta, precisa estar no formato hexadecimal lido pelas
+  antenas e o código patrimonial nunca é reaproveitado.
 - `test/auth_repository_test.dart` — login, cadastro, senha incorreta, e-mail duplicado,
   sessão persistente e garantia de que a senha nunca é gravada em texto puro.
 - `test/formatters_test.dart` — formatação de datas, horas, durações, percentuais e moeda.
 - `test/widget_test.dart` — telas reais: login, validação de formulário, navegação entre
-  as cinco abas, busca e filtros do inventário e abertura da ficha da ferramenta.
+  as cinco abas, busca e filtros do inventário, abertura da ficha da ferramenta e recusa
+  de EPC duplicado ou fora do formato no cadastro.
+- Acessibilidade — verifica que KPIs, gráficos, abas e botões expõem rótulos ao leitor
+  de tela (`find.bySemanticsLabel`).
 
 ---
 

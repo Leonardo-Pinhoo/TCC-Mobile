@@ -164,6 +164,7 @@ class PlantController extends ChangeNotifier {
   // --- Consultas -------------------------------------------------------------
 
   Tool? toolById(String id) => _repository.toolById(id);
+  Tool? toolByTag(String tag) => _repository.toolByTag(tag);
   List<Tool> search({String query = '', ToolStatus? status}) =>
       _repository.search(query: query, status: status);
   List<Tool> toolsInZone(String zoneId) => _repository.toolsInZone(zoneId);

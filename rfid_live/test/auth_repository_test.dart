@@ -1,5 +1,5 @@
-import 'package:dart_flutter/data/models/app_user.dart';
-import 'package:dart_flutter/data/repositories/auth_repository.dart';
+import 'package:rfid_live/data/models/app_user.dart';
+import 'package:rfid_live/data/repositories/auth_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

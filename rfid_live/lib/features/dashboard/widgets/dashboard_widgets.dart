@@ -27,7 +27,7 @@ class KpiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SurfaceCard(
+    final Widget card = SurfaceCard(
       onTap: onTap,
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
       child: Column(
@@ -51,6 +51,12 @@ class KpiCard extends StatelessWidget {
           ],
         ],
       ),
+    );
+    return Semantics(
+      label: caption == null ? '$label: $value' : '$label: $value. $caption',
+      button: onTap != null,
+      excludeSemantics: true,
+      child: card,
     );
   }
 }

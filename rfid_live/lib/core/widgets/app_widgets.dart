@@ -95,15 +95,18 @@ class StatusDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        boxShadow: <BoxShadow>[
-          BoxShadow(color: color.withValues(alpha: 0.5), blurRadius: 6),
-        ],
+    // Decorativo: a cor sempre acompanha um texto que já carrega o significado.
+    return ExcludeSemantics(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          boxShadow: <BoxShadow>[
+            BoxShadow(color: color.withValues(alpha: 0.5), blurRadius: 6),
+          ],
+        ),
       ),
     );
   }
@@ -276,7 +279,7 @@ class CountBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (count <= 0) return const SizedBox.shrink();
-    return Container(
+    final Widget badge = Container(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
       constraints: const BoxConstraints(minWidth: 17),
       decoration: BoxDecoration(
@@ -294,6 +297,11 @@ class CountBadge extends StatelessWidget {
           height: 1.3,
         ),
       ),
+    );
+    return Semantics(
+      label: count == 1 ? '1 alerta ativo' : '$count alertas ativos',
+      excludeSemantics: true,
+      child: badge,
     );
   }
 }
