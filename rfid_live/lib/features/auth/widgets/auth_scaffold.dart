@@ -14,40 +14,35 @@ class AppBrand extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
+        // Marca monocromática, no espírito do site da Atlas: disco branco
+        // com o ícone em preto e o nome em Alata.
         Container(
           width: 54,
           height: 54,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: <Color>[AppColors.primary, AppColors.primaryDeep],
-            ),
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.35),
-                blurRadius: 22,
-                offset: const Offset(0, 8),
-              ),
-            ],
+          decoration: const BoxDecoration(
+            color: AppColors.primary,
+            shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.sensors, color: Colors.white, size: 28),
+          child: const Icon(Icons.sensors, color: AppColors.onPrimary, size: 28),
         ),
         const SizedBox(height: 18),
         const Text(
           'RFID LIVE',
           style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
+            fontFamily: AppText.display,
+            fontSize: 24,
             letterSpacing: 2.5,
             color: AppColors.textPrimary,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         const Text(
           'Rastreamento de Ferramentas',
-          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+          style: TextStyle(
+            fontSize: 12,
+            letterSpacing: 0.4,
+            color: AppColors.textSecondary,
+          ),
         ),
         const SizedBox(height: 14),
         Row(

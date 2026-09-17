@@ -94,8 +94,8 @@ class _SplashScreen extends StatelessWidget {
             Text(
               'RFID LIVE',
               style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
+                fontFamily: AppText.display,
+                fontSize: 20,
                 letterSpacing: 3,
                 color: AppColors.textPrimary,
               ),

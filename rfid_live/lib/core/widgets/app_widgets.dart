@@ -14,7 +14,7 @@ class SurfaceCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(16),
     this.color = AppColors.surface,
     this.borderColor = AppColors.border,
-    this.radius = 14,
+    this.radius = AppText.radius,
     this.onTap,
   });
 
@@ -134,7 +134,7 @@ class StatusBadge extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(999),
         border: Border.all(color: color.withValues(alpha: 0.45)),
       ),
       child: Text(
@@ -353,7 +353,7 @@ class InfoPill extends StatelessWidget {
 class DashedBorderPainter extends CustomPainter {
   const DashedBorderPainter({
     required this.color,
-    this.radius = 12,
+    this.radius = AppText.radius,
     this.dash = 6,
     this.gap = 4,
     this.strokeWidth = 1.2,

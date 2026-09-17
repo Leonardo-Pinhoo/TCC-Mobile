@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme.dart';
 import '../../state/auth_controller.dart';
 import '../../state/plant_controller.dart';
 import 'widgets/auth_scaffold.dart';
@@ -71,13 +72,9 @@ class _RegisterPageState extends State<RegisterPage> {
       children: <Widget>[
         AppBrand(antennasOnline: antennas),
         const SizedBox(height: 30),
-        const Text(
+        Text(
           'Criar nova conta',
-          style: TextStyle(
-            fontSize: 21,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
+          style: AppText.title.copyWith(fontSize: 22),
         ),
         const SizedBox(height: 6),
         const Text(
@@ -199,7 +196,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: AppColors.onPrimary,
                         ),
                       )
                     : const Text('Criar conta'),

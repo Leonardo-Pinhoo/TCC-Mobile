@@ -68,8 +68,6 @@ class _InventoryPageState extends State<InventoryPage> {
       backgroundColor: AppColors.background,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => showNewToolSheet(context),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
         icon: const Icon(Icons.add, size: 20),
         label: const Text(
           'Cadastrar',
@@ -210,7 +208,11 @@ class _InventoryPageState extends State<InventoryPage> {
                           tool: tool,
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute<void>(
-                              builder: (_) => ToolDetailsPage(toolId: tool.id),
+                              builder: (_) => ToolDetailsPage(
+                                toolId: tool.id,
+                                toolIds: tools.map((Tool t) => t.id).toList(),
+                                initialIndex: index,
+                              ),
                             ),
                           ),
                         );
@@ -243,15 +245,15 @@ class _FilterChip extends StatelessWidget {
       padding: const EdgeInsets.only(right: 8),
       child: Material(
         color: selected ? color : AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(999),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(999),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(999),
               border: Border.all(
                 color: selected ? color : AppColors.border,
               ),
@@ -261,7 +263,7 @@ class _FilterChip extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: selected ? Colors.white : AppColors.textSecondary,
+                color: selected ? AppColors.onAccent(color) : AppColors.textSecondary,
               ),
             ),
           ),

@@ -82,7 +82,7 @@ class MovementRow extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(AppText.radius),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 9),
         child: Column(
@@ -171,14 +171,14 @@ class AlertRow extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: Material(
         color: color.withValues(alpha: alert.resolved ? 0.04 : 0.09),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(AppText.radius),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(AppText.radius),
           child: Container(
             padding: EdgeInsets.fromLTRB(12, dense ? 10 : 12, 10, dense ? 10 : 12),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(AppText.radius),
               border: Border(left: BorderSide(color: color, width: 3)),
             ),
             child: Row(

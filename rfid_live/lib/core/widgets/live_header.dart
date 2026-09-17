@@ -147,10 +147,10 @@ class _RefreshButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final Widget button = Material(
       color: AppColors.primary,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(999),
       child: InkWell(
         onTap: refreshing ? null : () => onRefresh(),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(999),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Row(
@@ -162,15 +162,15 @@ class _RefreshButton extends StatelessWidget {
                 child: refreshing
                     ? const CircularProgressIndicator(
                         strokeWidth: 1.8,
-                        color: Colors.white,
+                        color: AppColors.onPrimary,
                       )
-                    : const Icon(Icons.refresh, size: 13, color: Colors.white),
+                    : const Icon(Icons.refresh, size: 13, color: AppColors.onPrimary),
               ),
               const SizedBox(width: 6),
               const Text(
                 'Atualizar',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.onPrimary,
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                 ),

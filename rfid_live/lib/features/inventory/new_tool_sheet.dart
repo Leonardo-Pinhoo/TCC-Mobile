@@ -274,23 +274,6 @@ class _NewToolSheetState extends State<_NewToolSheet> {
                   showSelectedIcon: false,
                   onSelectionChanged: (Set<String> selection) =>
                       setState(() => _criticality = selection.first),
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.resolveWith<Color>(
-                      (Set<WidgetState> states) =>
-                          states.contains(WidgetState.selected)
-                              ? AppColors.primary
-                              : AppColors.surfaceInput,
-                    ),
-                    foregroundColor: WidgetStateProperty.resolveWith<Color>(
-                      (Set<WidgetState> states) =>
-                          states.contains(WidgetState.selected)
-                              ? Colors.white
-                              : AppColors.textSecondary,
-                    ),
-                    side: const WidgetStatePropertyAll<BorderSide>(
-                      BorderSide(color: AppColors.border),
-                    ),
-                  ),
                 ),
                 const SizedBox(height: 22),
                 FilledButton(

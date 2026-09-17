@@ -253,6 +253,31 @@ void main() {
       await disposeApp(tester);
     });
 
+    testWidgets('arrasta para o lado troca de ferramenta dentro da ficha',
+        (WidgetTester tester) async {
+      await pumpApp(tester, authenticated: true);
+      await tester.tap(find.text('INVENTÁRIO'));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      // Ordenação padrão é "leitura mais recente": FER-001 é a primeira.
+      await tester.tap(inInventory(find.text('Chave de Impacto 1/2"')).first);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
+
+      expect(find.text('FER-001'), findsWidgets);
+      expect(find.text('1 de 6'), findsOneWidget);
+
+      await tester.drag(find.byType(PageView), const Offset(-400, 0));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
+
+      expect(find.text('FER-002'), findsWidgets);
+      expect(find.text('Parafusadeira Bosch GSR'), findsWidgets);
+      expect(find.text('2 de 6'), findsOneWidget);
+
+      await disposeApp(tester);
+    });
+
     testWidgets('cadastro recusa um EPC já vinculado a outra ferramenta',
         (WidgetTester tester) async {
       await pumpApp(tester, authenticated: true);

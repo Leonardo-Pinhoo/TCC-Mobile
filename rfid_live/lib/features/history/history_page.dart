@@ -55,21 +55,6 @@ class _HistoryPageState extends State<HistoryPage> {
             showSelectedIcon: false,
             onSelectionChanged: (Set<bool> selection) =>
                 setState(() => _showIndicators = selection.first),
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.resolveWith<Color>(
-                (Set<WidgetState> states) => states.contains(WidgetState.selected)
-                    ? AppColors.primary
-                    : AppColors.surface,
-              ),
-              foregroundColor: WidgetStateProperty.resolveWith<Color>(
-                (Set<WidgetState> states) => states.contains(WidgetState.selected)
-                    ? Colors.white
-                    : AppColors.textSecondary,
-              ),
-              side: const WidgetStatePropertyAll<BorderSide>(
-                BorderSide(color: AppColors.border),
-              ),
-            ),
           ),
         ),
         Expanded(
@@ -202,15 +187,15 @@ class _TypeChip extends StatelessWidget {
       padding: const EdgeInsets.only(right: 8),
       child: Material(
         color: selected ? color : AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(999),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(999),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14),
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(999),
               border: Border.all(color: selected ? color : AppColors.border),
             ),
             child: Text(
@@ -218,7 +203,7 @@ class _TypeChip extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: selected ? Colors.white : AppColors.textSecondary,
+                color: selected ? AppColors.onAccent(color) : AppColors.textSecondary,
               ),
             ),
           ),

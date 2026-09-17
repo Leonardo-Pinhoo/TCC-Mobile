@@ -30,15 +30,26 @@ class _HomeShellState extends State<HomeShell> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: IndexedStack(
-        index: _index,
-        children: <Widget>[
-          DashboardPage(onSeeAlerts: () => _goTo(3), onSeeHistory: () => _goTo(4)),
-          const PlantMapPage(),
-          const InventoryPage(),
-          const AlertsPage(),
-          const HistoryPage(),
-        ],
+      // O fundo do cabeçalho se estende sob a barra de status; a área segura
+      // impede que ele fique atrás dos ícones do sistema.
+      body: ColoredBox(
+        color: AppColors.backgroundTop,
+        child: SafeArea(
+          bottom: false,
+          child: IndexedStack(
+            index: _index,
+            children: <Widget>[
+              DashboardPage(
+                onSeeAlerts: () => _goTo(3),
+                onSeeHistory: () => _goTo(4),
+              ),
+              const PlantMapPage(),
+              const InventoryPage(),
+              const AlertsPage(),
+              const HistoryPage(),
+            ],
+          ),
+        ),
       ),
       bottomNavigationBar: _BottomNav(
         index: _index,

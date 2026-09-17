@@ -196,7 +196,7 @@ class _ZoneTile extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
       decoration: BoxDecoration(
         color: zone.accent.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppText.radius),
         border: zone.dashedBorder
             ? null
             : Border.all(color: zone.accent.withValues(alpha: 0.65)),
@@ -263,7 +263,7 @@ class _ZoneCountRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => showZoneSheet(context, zone),
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(AppText.radius),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(

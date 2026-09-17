@@ -16,7 +16,7 @@ alertas e indicadores de BI.
 | **Painel Geral** | KPIs (total rastreadas, em uso, disponíveis, não localizadas), distribuição de status, indicadores operacionais (utilização, visibilidade RFID, patrimônio rastreado), últimas movimentações e alertas ativos. |
 | **Mapa da Planta** | Zonas da fábrica em tempo real (Linha A, Linha B, Qualidade, Manutenção, Almoxarifado e "Fora de cobertura"), ocupação por zona, leituras ao vivo das antenas e detalhe de cada zona. |
 | **Inventário** | Busca por nome/código/EPC, filtros por status, ordenação, cadastro de novas ferramentas e ficha completa de cada item. |
-| **Ficha da ferramenta** | Localizar via antena, registrar movimentação, enviar/concluir manutenção, ficha técnica e histórico da etiqueta. |
+| **Ficha da ferramenta** | Localizar via antena, registrar movimentação, enviar/concluir manutenção, ficha técnica e histórico da etiqueta. A partir do inventário, arraste o dedo para o lado para alternar entre as ferramentas da lista filtrada. |
 | **Alertas** | Ferramenta não localizada, manutenção vencida e bateria baixa de antena, com resolução individual ou em lote. |
 | **Histórico** | Linha do tempo de movimentações com filtro por tipo e aba **Indicadores** (movimentações por hora, prontidão, utilização, ranking de ferramentas, ocupação por zona e patrimônio sob rastreio). |
 
@@ -28,7 +28,7 @@ alertas e indicadores de BI.
   modo ao vivo e logout.
 - **Indicadores de gestão** pensados para leitura executiva: taxa de utilização,
   prontidão, visibilidade das etiquetas e exposição financeira sem rastreio.
-- Interface 100% em português, tema escuro industrial, pull-to-refresh, estados vazios
+- Interface 100% em português, tema escuro monocromático alinhado ao site da Atlas, pull-to-refresh, estados vazios
   e validação em todos os formulários.
 - **Acessibilidade**: KPIs, anéis de BI, histograma e barras de ranking são desenhados em
   canvas e receberam rótulos semânticos, para que um leitor de tela leia "Utilização: 33%"
@@ -137,6 +137,20 @@ Também é possível criar uma conta nova pela opção **Criar nova conta**.
 > localização. As permissões `ACCESS_FINE_LOCATION`/`ACCESS_COARSE_LOCATION` que existiam
 > eram resíduo dos exercícios em `examples/` e foram removidas.
 
+#### Identidade visual (site da Atlas)
+
+A interface segue a linguagem de [theatlasdev.com.br](https://theatlasdev.com.br/):
+
+| Elemento | Aplicação no app |
+|----------|------------------|
+| Paleta | Fundo `#0A0A0A`, superfícies `#1A1A1A`/`#232323`, texto `#FAFAF8`, cinza `#8A8A8A`, linhas `rgba(255,255,255,0.08)` — as mesmas variáveis do CSS do site. |
+| Acento | Monocromático: o branco `#FAFAF8` é o botão principal, o FAB, o foco de campo e a aba ativa. As cores de status (em uso, disponível, manutenção, não localizada) continuam coloridas porque carregam significado operacional. |
+| Fontes | **Alata** nos títulos e métricas, **Inter** no corpo (`assets/fonts`, licença OFL). |
+| Botões | Pílulas (`StadiumBorder`) com texto espaçado; o principal é branco com texto preto e o secundário é "ghost" (transparente com borda sutil). |
+| Campos | Sem caixa, apenas a linha inferior, que fica branca ao receber foco. |
+| Cartões | Planos, raio de 4 px (`AppText.radius`) e borda de 1 px. |
+| Rótulos | "Eyebrow" em caixa alta com espaçamento largo e cinza médio. |
+
 ### 3.7 Gerar o APK para entrega
 
 ```bash
@@ -152,7 +166,7 @@ Para publicar na Play Store use `flutter build appbundle --release`.
 
 ```bash
 flutter analyze   # análise estática — deve terminar com "No issues found!"
-flutter test      # 51 testes automatizados
+flutter test      # 52 testes automatizados
 ```
 
 Cobertura da suíte:
@@ -180,7 +194,7 @@ lib/
 ├── main.dart                    # inicialização (locale pt-BR, orientação)
 ├── app.dart                     # MaterialApp, providers e roteamento por estado de login
 ├── core/
-│   ├── theme/                   # paleta e tema escuro industrial
+│   ├── theme/                   # paleta e tema escuro (identidade Atlas)
 │   ├── utils/formatters.dart    # datas, horas, moeda e "tempo atrás"
 │   └── widgets/                 # cartões, badges, cabeçalho ao vivo e gráficos
 ├── data/

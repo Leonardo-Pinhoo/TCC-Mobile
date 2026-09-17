@@ -82,13 +82,9 @@ class _LoginPageState extends State<LoginPage> {
       children: <Widget>[
         AppBrand(antennasOnline: antennas),
         const SizedBox(height: 34),
-        const Text(
+        Text(
           'Entrar na plataforma',
-          style: TextStyle(
-            fontSize: 21,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
+          style: AppText.title.copyWith(fontSize: 22),
         ),
         const SizedBox(height: 6),
         const Text(
@@ -171,7 +167,7 @@ class _LoginPageState extends State<LoginPage> {
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: AppColors.onPrimary,
                         ),
                       )
                     : const Text('Entrar'),

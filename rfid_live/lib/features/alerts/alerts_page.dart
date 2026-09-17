@@ -105,13 +105,9 @@ class _AlertsPageState extends State<AlertsPage> {
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   color: _filter == filter
-                                      ? Colors.white
+                                      ? AppColors.onPrimary
                                       : AppColors.textSecondary,
                                 ),
-                                backgroundColor: AppColors.surface,
-                                selectedColor: AppColors.primary,
-                                side: const BorderSide(color: AppColors.border),
-                                showCheckmark: false,
                                 onSelected: (_) =>
                                     setState(() => _filter = filter),
                               ),

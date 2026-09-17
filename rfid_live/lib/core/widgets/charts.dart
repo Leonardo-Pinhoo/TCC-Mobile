@@ -118,8 +118,8 @@ class MetricRing extends StatelessWidget {
                     Text(
                       value,
                       style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
+                        fontFamily: AppText.display,
+                        fontSize: 19,
                         color: color,
                       ),
                     ),
