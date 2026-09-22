@@ -28,7 +28,10 @@ class Fmt {
   /// "agora", "2 min atrás", "1 h atrás", "3 d atrás".
   static String timeAgo(DateTime value, {DateTime? reference}) {
     final Duration diff = (reference ?? DateTime.now()).difference(value);
-    if (diff.isNegative || diff.inSeconds < 30) return 'agora';
+    // O corte é em minutos inteiros para casar com a unidade da faixa
+    // seguinte: cortar em segundos deixava 30s–59s cair aqui como
+    // "0 min atrás".
+    if (diff.isNegative || diff.inMinutes < 1) return 'agora';
     if (diff.inMinutes < 60) return '${diff.inMinutes} min atrás';
     if (diff.inHours < 24) return '${diff.inHours} h atrás';
     if (diff.inDays < 30) return '${diff.inDays} d atrás';

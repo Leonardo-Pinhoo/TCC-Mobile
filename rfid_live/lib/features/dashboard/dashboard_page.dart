@@ -216,13 +216,18 @@ class _KpiGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      crossAxisCount: 2,
+    return GridView(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
-      childAspectRatio: 1.55,
+      // Altura fixa em vez de proporção: o conteúdo do cartão tem altura
+      // constante, então amarrá-lo à largura esticava os cartões e abria
+      // um vão enorme em telas largas (tablet).
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        mainAxisExtent: 118,
+      ),
       children: <Widget>[
         KpiCard(
           label: 'Total rastreadas',

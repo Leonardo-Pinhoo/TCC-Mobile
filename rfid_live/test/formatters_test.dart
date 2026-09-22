@@ -31,6 +31,22 @@ void main() {
         'agora',
       );
     });
+
+    test('leituras com menos de um minuto nunca viram "0 min atrás"', () {
+      for (final int seconds in <int>[29, 30, 45, 59]) {
+        expect(
+          Fmt.timeAgo(reference.subtract(Duration(seconds: seconds)),
+              reference: reference),
+          'agora',
+          reason: '$seconds s atrás deveria ser "agora"',
+        );
+      }
+      expect(
+        Fmt.timeAgo(reference.subtract(const Duration(seconds: 60)),
+            reference: reference),
+        '1 min atrás',
+      );
+    });
   });
 
   test('clock e isoDate seguem o formato das telas', () {
