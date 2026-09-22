@@ -3,7 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
+import '../theme/app_palette.dart';
 import '../theme/app_theme.dart';
 
 /// Cartão base com borda sutil usado em praticamente todas as telas.
@@ -12,16 +12,17 @@ class SurfaceCard extends StatelessWidget {
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(16),
-    this.color = AppColors.surface,
-    this.borderColor = AppColors.border,
+    this.color,
+    this.borderColor,
     this.radius = AppText.radius,
     this.onTap,
   });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
-  final Color color;
-  final Color borderColor;
+  /// Nulos usam a paleta do tema; valor padrao de parametro precisa ser const.
+  final Color? color;
+  final Color? borderColor;
   final double radius;
   final VoidCallback? onTap;
 
@@ -30,9 +31,9 @@ class SurfaceCard extends StatelessWidget {
     final Widget content = Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: color,
+        color: color ?? context.colors.surface,
         borderRadius: BorderRadius.circular(radius),
-        border: Border.all(color: borderColor),
+        border: Border.all(color: borderColor ?? context.colors.border),
       ),
       child: child,
     );
@@ -73,7 +74,7 @@ class SectionCard extends StatelessWidget {
           Row(
             children: <Widget>[
               Expanded(
-                child: Text(title.toUpperCase(), style: AppText.labelStrong),
+                child: Text(title.toUpperCase(), style: context.texts.labelStrong),
               ),
               ?trailing,
             ],
@@ -90,6 +91,7 @@ class SectionCard extends StatelessWidget {
 class StatusDot extends StatelessWidget {
   const StatusDot({super.key, required this.color, this.size = 8});
 
+  /// Nulos usam a paleta do tema; valor padrao de parametro precisa ser const.
   final Color color;
   final double size;
 
@@ -122,6 +124,7 @@ class StatusBadge extends StatelessWidget {
   });
 
   final String label;
+  /// Nulos usam a paleta do tema; valor padrao de parametro precisa ser const.
   final Color color;
   final bool dense;
 
@@ -170,7 +173,7 @@ class LabeledValue extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(label.toUpperCase(), style: AppText.label),
+        Text(label.toUpperCase(), style: context.texts.label),
         const SizedBox(height: 4),
         Text(
           value,
@@ -185,9 +188,10 @@ class LabeledValue extends StatelessWidget {
 
 /// Indicador pulsante "ao vivo".
 class LiveDot extends StatefulWidget {
-  const LiveDot({super.key, this.color = AppColors.live, this.size = 7});
+  const LiveDot({super.key, this.color, this.size = 7});
 
-  final Color color;
+  /// Nulos usam a paleta do tema; valor padrao de parametro precisa ser const.
+  final Color? color;
   final double size;
 
   @override
@@ -213,7 +217,7 @@ class _LiveDotState extends State<LiveDot>
       opacity: Tween<double>(begin: 0.35, end: 1).animate(
         CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
       ),
-      child: StatusDot(color: widget.color, size: widget.size),
+      child: StatusDot(color: widget.color ?? context.colors.live, size: widget.size),
     );
   }
 }
@@ -243,11 +247,11 @@ class EmptyState extends StatelessWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: AppColors.surfaceAlt,
+              color: context.colors.surfaceAlt,
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: context.colors.border),
             ),
-            child: Icon(icon, color: AppColors.textMuted, size: 26),
+            child: Icon(icon, color: context.colors.textMuted, size: 26),
           ),
           const SizedBox(height: 16),
           Text(title, style: AppText.cardTitle, textAlign: TextAlign.center),
@@ -255,7 +259,7 @@ class EmptyState extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               message!,
-              style: AppText.caption.copyWith(color: AppColors.textMuted),
+              style: context.texts.caption.copyWith(color: context.colors.textMuted),
               textAlign: TextAlign.center,
             ),
           ],
@@ -271,10 +275,11 @@ class EmptyState extends StatelessWidget {
 
 /// Contador vermelho sobreposto a um ícone.
 class CountBadge extends StatelessWidget {
-  const CountBadge({super.key, required this.count, this.color = AppColors.critical});
+  const CountBadge({super.key, required this.count, this.color});
 
   final int count;
-  final Color color;
+  /// Nulos usam a paleta do tema; valor padrao de parametro precisa ser const.
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -283,9 +288,9 @@ class CountBadge extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
       constraints: const BoxConstraints(minWidth: 17),
       decoration: BoxDecoration(
-        color: color,
+        color: color ?? context.colors.critical,
         borderRadius: BorderRadius.circular(9),
-        border: Border.all(color: AppColors.background, width: 1.5),
+        border: Border.all(color: context.colors.background, width: 1.5),
       ),
       child: Text(
         count > 99 ? '99+' : '$count',
@@ -316,6 +321,7 @@ class InfoPill extends StatelessWidget {
   });
 
   final String label;
+  /// Nulos usam a paleta do tema; valor padrao de parametro precisa ser const.
   final Color color;
   final IconData? icon;
 
@@ -359,6 +365,7 @@ class DashedBorderPainter extends CustomPainter {
     this.strokeWidth = 1.2,
   });
 
+  /// Nulos usam a paleta do tema; valor padrao de parametro precisa ser const.
   final Color color;
   final double radius;
   final double dash;

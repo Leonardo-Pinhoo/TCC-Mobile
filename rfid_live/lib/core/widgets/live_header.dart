@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
+import '../theme/app_palette.dart';
 import '../theme/app_theme.dart';
 import '../utils/formatters.dart';
 import 'app_widgets.dart';
@@ -43,12 +43,12 @@ class _LiveClockState extends State<LiveClock> {
       child: Text(
       Fmt.clock(_now),
       style: widget.style ??
-          const TextStyle(
+          TextStyle(
             fontFamily: AppText.mono,
             fontSize: 13,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
-            color: AppColors.textSecondary,
+            color: context.colors.textSecondary,
           ),
       ),
     );
@@ -77,9 +77,9 @@ class LiveHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
-      decoration: const BoxDecoration(
-        color: AppColors.backgroundTop,
-        border: Border(bottom: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: context.colors.backgroundTop,
+        border: Border(bottom: BorderSide(color: context.colors.border)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,13 +88,13 @@ class LiveHeader extends StatelessWidget {
             children: <Widget>[
               const LiveDot(),
               const SizedBox(width: 6),
-              const Text(
+              Text(
                 'RFID LIVE',
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.6,
-                  color: AppColors.live,
+                  color: context.colors.live,
                 ),
               ),
               const Spacer(),
@@ -114,8 +114,8 @@ class LiveHeader extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         subtitle!,
-                        style: AppText.caption.copyWith(
-                          color: AppColors.textMuted,
+                        style: context.texts.caption.copyWith(
+                          color: context.colors.textMuted,
                           fontSize: 11,
                         ),
                         maxLines: 1,
@@ -146,7 +146,7 @@ class _RefreshButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget button = Material(
-      color: AppColors.primary,
+      color: context.colors.primary,
       borderRadius: BorderRadius.circular(999),
       child: InkWell(
         onTap: refreshing ? null : () => onRefresh(),
@@ -160,17 +160,17 @@ class _RefreshButton extends StatelessWidget {
                 width: 13,
                 height: 13,
                 child: refreshing
-                    ? const CircularProgressIndicator(
+                    ? CircularProgressIndicator(
                         strokeWidth: 1.8,
-                        color: AppColors.onPrimary,
+                        color: context.colors.onPrimary,
                       )
-                    : const Icon(Icons.refresh, size: 13, color: AppColors.onPrimary),
+                    : Icon(Icons.refresh, size: 13, color: context.colors.onPrimary),
               ),
               const SizedBox(width: 6),
-              const Text(
+              Text(
                 'Atualizar',
                 style: TextStyle(
-                  color: AppColors.onPrimary,
+                  color: context.colors.onPrimary,
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                 ),

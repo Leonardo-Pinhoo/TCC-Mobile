@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/app_widgets.dart';
@@ -39,12 +39,12 @@ class ToolCard extends StatelessWidget {
               const SizedBox(width: 10),
               StatusBadge(
                 label: tool.status.shortLabel,
-                color: tool.status.color,
+                color: tool.status.colorIn(context.colors),
               ),
             ],
           ),
           const SizedBox(height: 6),
-          Text('${tool.id} · ${tool.tag}', style: AppText.codeMono),
+          Text('${tool.id} · ${tool.tag}', style: context.texts.code),
           const SizedBox(height: 16),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,14 +54,14 @@ class ToolCard extends StatelessWidget {
                   label: 'Zona',
                   value: tool.zoneId == null ? '—' : zone.name,
                   valueColor:
-                      tool.zoneId == null ? AppColors.textMuted : zone.accent,
+                      tool.zoneId == null ? context.colors.textMuted : zone.accentIn(context.colors),
                 ),
               ),
               Expanded(
                 child: LabeledValue(
                   label: 'Responsável',
                   value: tool.holder ?? '—',
-                  valueColor: tool.holder == null ? AppColors.textMuted : null,
+                  valueColor: tool.holder == null ? context.colors.textMuted : null,
                 ),
               ),
             ],
@@ -76,7 +76,7 @@ class ToolCard extends StatelessWidget {
                   value: tool.nextMaintenance == null
                       ? '—'
                       : (overdue ? 'Vencida' : Fmt.isoDate(tool.nextMaintenance!)),
-                  valueColor: overdue ? AppColors.maintenance : null,
+                  valueColor: overdue ? context.colors.maintenance : null,
                 ),
               ),
               Expanded(
@@ -84,7 +84,7 @@ class ToolCard extends StatelessWidget {
                   label: 'Última leitura',
                   value: Fmt.timeAgo(tool.lastRead),
                   valueColor: tool.status == ToolStatus.missing
-                      ? AppColors.missing
+                      ? context.colors.missing
                       : null,
                 ),
               ),

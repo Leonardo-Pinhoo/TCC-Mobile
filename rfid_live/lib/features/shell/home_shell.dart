@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/widgets/app_widgets.dart';
 import '../../state/plant_controller.dart';
 import '../alerts/alerts_page.dart';
@@ -29,11 +29,11 @@ class _HomeShellState extends State<HomeShell> {
         context.select<PlantController, int>((PlantController c) => c.activeAlerts.length);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       // O fundo do cabeçalho se estende sob a barra de status; a área segura
       // impede que ele fique atrás dos ícones do sistema.
       body: ColoredBox(
-        color: AppColors.backgroundTop,
+        color: context.colors.backgroundTop,
         child: SafeArea(
           bottom: false,
           child: IndexedStack(
@@ -89,9 +89,9 @@ class _BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.backgroundTop,
-        border: Border(top: BorderSide(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: context.colors.backgroundTop,
+        border: Border(top: BorderSide(color: context.colors.border)),
       ),
       child: SafeArea(
         top: false,
@@ -102,7 +102,7 @@ class _BottomNav extends StatelessWidget {
               final _NavItem item = _items[i];
               final bool active = i == index;
               final Color color =
-                  active ? AppColors.primary : AppColors.textMuted;
+                  active ? context.colors.primary : context.colors.textMuted;
               final String semanticLabel = i == 3 && alertCount > 0
                   ? '${item.label}, $alertCount ativos'
                   : item.label;
@@ -149,7 +149,7 @@ class _BottomNav extends StatelessWidget {
                         height: 2,
                         width: active ? 22 : 0,
                         decoration: BoxDecoration(
-                          color: AppColors.primary,
+                          color: context.colors.primary,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),

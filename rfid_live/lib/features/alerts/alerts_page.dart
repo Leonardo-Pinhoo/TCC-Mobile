@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/app_widgets.dart';
 import '../../core/widgets/live_header.dart';
@@ -58,8 +58,8 @@ class _AlertsPageState extends State<AlertsPage> {
         Expanded(
           child: RefreshIndicator(
             onRefresh: plant.refresh,
-            color: AppColors.primary,
-            backgroundColor: AppColors.surface,
+            color: context.colors.primary,
+            backgroundColor: context.colors.surface,
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
               children: <Widget>[
@@ -69,7 +69,7 @@ class _AlertsPageState extends State<AlertsPage> {
                       child: _AlertSummary(
                         label: 'Críticos',
                         value: critical,
-                        color: AppColors.critical,
+                        color: context.colors.critical,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -77,7 +77,7 @@ class _AlertsPageState extends State<AlertsPage> {
                       child: _AlertSummary(
                         label: 'Atenção',
                         value: warning,
-                        color: AppColors.warning,
+                        color: context.colors.warning,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -85,7 +85,7 @@ class _AlertsPageState extends State<AlertsPage> {
                       child: _AlertSummary(
                         label: 'Resolvidos',
                         value: resolved,
-                        color: AppColors.available,
+                        color: context.colors.available,
                       ),
                     ),
                   ],
@@ -105,8 +105,8 @@ class _AlertsPageState extends State<AlertsPage> {
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   color: _filter == filter
-                                      ? AppColors.onPrimary
-                                      : AppColors.textSecondary,
+                                      ? context.colors.onPrimary
+                                      : context.colors.textSecondary,
                                 ),
                                 onSelected: (_) =>
                                     setState(() => _filter = filter),
@@ -164,10 +164,10 @@ class _AlertsPageState extends State<AlertsPage> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: const Text('Resolver todos os alertas?', style: AppText.cardTitle),
-        content: const Text(
+        content: Text(
           'Os alertas serão arquivados como tratados. Novos eventos continuarão '
           'sendo gerados pelas antenas.',
-          style: AppText.caption,
+          style: context.texts.caption,
         ),
         actions: <Widget>[
           TextButton(
@@ -203,7 +203,7 @@ class _AlertSummary extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(label.toUpperCase(), style: AppText.label),
+          Text(label.toUpperCase(), style: context.texts.label),
           const SizedBox(height: 8),
           Text(
             '$value',

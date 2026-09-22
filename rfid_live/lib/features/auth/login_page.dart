@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/repositories/auth_repository.dart';
 import '../../state/auth_controller.dart';
@@ -56,11 +56,11 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: const Text('Recuperação de acesso', style: AppText.cardTitle),
-        content: const Text(
+        content: Text(
           'A redefinição de senha é feita pelo administrador do sistema na '
           'central de ferramentaria.\n\nAcesso de demonstração:\n'
           'admin@rfidlive.com.br / 123456',
-          style: AppText.caption,
+          style: context.texts.caption,
         ),
         actions: <Widget>[
           TextButton(
@@ -87,9 +87,9 @@ class _LoginPageState extends State<LoginPage> {
           style: AppText.title.copyWith(fontSize: 22),
         ),
         const SizedBox(height: 6),
-        const Text(
+        Text(
           'Acesso restrito — Sistema Industrial v1.0.0',
-          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+          style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
         ),
         const SizedBox(height: 26),
         Form(
@@ -137,7 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
                         size: 19,
-                        color: AppColors.textMuted,
+                        color: context.colors.textMuted,
                       ),
                       tooltip: _obscure ? 'Mostrar senha' : 'Ocultar senha',
                     ),
@@ -162,12 +162,12 @@ class _LoginPageState extends State<LoginPage> {
               FilledButton(
                 onPressed: auth.busy ? null : _submit,
                 child: auth.busy
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: AppColors.onPrimary,
+                          color: context.colors.onPrimary,
                         ),
                       )
                     : const Text('Entrar'),
@@ -178,12 +178,12 @@ class _LoginPageState extends State<LoginPage> {
         const SizedBox(height: 22),
         Row(
           children: <Widget>[
-            const Expanded(child: Divider(color: AppColors.border)),
+            Expanded(child: Divider(color: context.colors.border)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Text('ou', style: AppText.caption.copyWith(color: AppColors.textMuted)),
+              child: Text('ou', style: context.texts.caption.copyWith(color: context.colors.textMuted)),
             ),
-            const Expanded(child: Divider(color: AppColors.border)),
+            Expanded(child: Divider(color: context.colors.border)),
           ],
         ),
         const SizedBox(height: 22),

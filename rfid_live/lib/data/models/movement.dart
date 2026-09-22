@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 
 enum MovementType { transfer, checkout, checkin, maintenance, reading, register }
 
@@ -23,13 +23,13 @@ extension MovementTypeX on MovementType {
         MovementType.register => Icons.add_circle_outline,
       };
 
-  Color get color => switch (this) {
-        MovementType.transfer => AppColors.inUse,
-        MovementType.checkout => AppColors.maintenance,
-        MovementType.checkin => AppColors.available,
-        MovementType.maintenance => AppColors.maintenance,
-        MovementType.reading => AppColors.textMuted,
-        MovementType.register => AppColors.available,
+  Color colorIn(AppPalette palette) => switch (this) {
+        MovementType.transfer => palette.inUse,
+        MovementType.checkout => palette.maintenance,
+        MovementType.checkin => palette.available,
+        MovementType.maintenance => palette.maintenance,
+        MovementType.reading => palette.textMuted,
+        MovementType.register => palette.available,
       };
 }
 

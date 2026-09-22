@@ -2,20 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-import 'core/theme/app_colors.dart';
+import 'core/theme/app_palette.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/login_page.dart';
 import 'features/shell/home_shell.dart';
 import 'state/auth_controller.dart';
 import 'state/plant_controller.dart';
+import 'state/theme_controller.dart';
 
 class RfidLiveApp extends StatelessWidget {
-  const RfidLiveApp({super.key, this.authController, this.plantController});
+  const RfidLiveApp({
+    super.key,
+    this.authController,
+    this.plantController,
+    this.themeController,
+  });
 
   /// Controladores injetáveis — usados pelos testes para desligar o
   /// simulador em tempo real e isolar cada cenário.
   final AuthController? authController;
   final PlantController? plantController;
+  final ThemeController? themeController;
 
   @override
   Widget build(BuildContext context) {
@@ -27,11 +34,33 @@ class RfidLiveApp extends StatelessWidget {
         ChangeNotifierProvider<PlantController>(
           create: (_) => plantController ?? (PlantController()..loadPreferences()),
         ),
+        ChangeNotifierProvider<ThemeController>(
+          create: (_) =>
+              themeController ?? (ThemeController()..loadPreference()),
+        ),
       ],
-      child: MaterialApp(
+      child: const _ThemedApp(),
+    );
+  }
+}
+
+/// Separado do [RfidLiveApp] para que a troca de tema reconstrua o
+/// [MaterialApp] — se o `watch` ficasse acima do provider, ele não veria a
+/// mudança.
+class _ThemedApp extends StatelessWidget {
+  const _ThemedApp();
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeMode mode =
+        context.select<ThemeController, ThemeMode>((ThemeController c) => c.mode);
+
+    return MaterialApp(
         title: 'RFID LIVE',
         debugShowCheckedModeBanner: false,
-        theme: AppTheme.dark,
+        theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        themeMode: mode,
         locale: const Locale('pt', 'BR'),
         supportedLocales: const <Locale>[Locale('pt', 'BR')],
         localizationsDelegates: const <LocalizationsDelegate<Object>>[
@@ -53,8 +82,7 @@ class RfidLiveApp extends StatelessWidget {
           );
         },
         home: const _AppGate(),
-      ),
-    );
+      );
   }
 }
 
@@ -83,13 +111,13 @@ class _SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: AppColors.background,
+    return Scaffold(
+      backgroundColor: context.colors.background,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Icon(Icons.sensors, size: 44, color: AppColors.primary),
+            Icon(Icons.sensors, size: 44, color: context.colors.primary),
             SizedBox(height: 18),
             Text(
               'RFID LIVE',
@@ -97,7 +125,7 @@ class _SplashScreen extends StatelessWidget {
                 fontFamily: AppText.display,
                 fontSize: 20,
                 letterSpacing: 3,
-                color: AppColors.textPrimary,
+                color: context.colors.textPrimary,
               ),
             ),
             SizedBox(height: 24),

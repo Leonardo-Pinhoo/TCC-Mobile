@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/models/tool.dart';
 import '../../data/models/zone.dart';
@@ -17,7 +17,7 @@ import '../auth/widgets/auth_scaffold.dart';
 Future<void> showNewToolSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: AppColors.surface,
+    backgroundColor: context.colors.surface,
     isScrollControlled: true,
     builder: (BuildContext context) => const _NewToolSheet(),
   );
@@ -142,11 +142,11 @@ class _NewToolSheetState extends State<_NewToolSheet> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                Text('CADASTRAR FERRAMENTA', style: AppText.labelStrong),
+                Text('CADASTRAR FERRAMENTA', style: context.texts.labelStrong),
                 const SizedBox(height: 4),
                 Text(
                   'A etiqueta passa a ser rastreada na próxima varredura.',
-                  style: AppText.caption.copyWith(color: AppColors.textMuted),
+                  style: context.texts.caption.copyWith(color: context.colors.textMuted),
                 ),
                 const SizedBox(height: 18),
                 LabeledField(
@@ -181,10 +181,10 @@ class _NewToolSheetState extends State<_NewToolSheet> {
                         tooltip: 'Gerar novo EPC',
                         onPressed: () =>
                             setState(() => _tag.text = _freshTag()),
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.autorenew,
                           size: 19,
-                          color: AppColors.textMuted,
+                          color: context.colors.textMuted,
                         ),
                       ),
                     ),
@@ -200,10 +200,10 @@ class _NewToolSheetState extends State<_NewToolSheet> {
                         child: DropdownButtonFormField<String>(
                           initialValue: _category,
                           isExpanded: true,
-                          dropdownColor: AppColors.surfaceAlt,
-                          style: const TextStyle(
+                          dropdownColor: context.colors.surfaceAlt,
+                          style: TextStyle(
                             fontSize: 14,
-                            color: AppColors.textPrimary,
+                            color: context.colors.textPrimary,
                           ),
                           items: _categories
                               .map((String c) => DropdownMenuItem<String>(
@@ -223,10 +223,10 @@ class _NewToolSheetState extends State<_NewToolSheet> {
                         child: DropdownButtonFormField<String>(
                           initialValue: _zoneId,
                           isExpanded: true,
-                          dropdownColor: AppColors.surfaceAlt,
-                          style: const TextStyle(
+                          dropdownColor: context.colors.surfaceAlt,
+                          style: TextStyle(
                             fontSize: 14,
-                            color: AppColors.textPrimary,
+                            color: context.colors.textPrimary,
                           ),
                           items: kZones
                               .map((Zone z) => DropdownMenuItem<String>(
@@ -261,7 +261,7 @@ class _NewToolSheetState extends State<_NewToolSheet> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                Text('CRITICIDADE', style: AppText.label),
+                Text('CRITICIDADE', style: context.texts.label),
                 const SizedBox(height: 8),
                 SegmentedButton<String>(
                   segments: _criticalities

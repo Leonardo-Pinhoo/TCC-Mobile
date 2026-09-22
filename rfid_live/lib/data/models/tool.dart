@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 
 enum ToolStatus { inUse, available, maintenance, missing }
 
@@ -20,11 +20,11 @@ extension ToolStatusX on ToolStatus {
         ToolStatus.missing => 'Não local.',
       };
 
-  Color get color => switch (this) {
-        ToolStatus.inUse => AppColors.inUse,
-        ToolStatus.available => AppColors.available,
-        ToolStatus.maintenance => AppColors.maintenance,
-        ToolStatus.missing => AppColors.missing,
+  Color colorIn(AppPalette palette) => switch (this) {
+        ToolStatus.inUse => palette.inUse,
+        ToolStatus.available => palette.available,
+        ToolStatus.maintenance => palette.maintenance,
+        ToolStatus.missing => palette.missing,
       };
 
   IconData get icon => switch (this) {

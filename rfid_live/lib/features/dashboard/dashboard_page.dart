@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/app_widgets.dart';
@@ -45,8 +45,8 @@ class DashboardPage extends StatelessWidget {
         Expanded(
           child: RefreshIndicator(
             onRefresh: plant.refresh,
-            color: AppColors.primary,
-            backgroundColor: AppColors.surface,
+            color: context.colors.primary,
+            backgroundColor: context.colors.surface,
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
               children: <Widget>[
@@ -60,25 +60,25 @@ class DashboardPage extends StatelessWidget {
                         label: ToolStatus.inUse.label,
                         value: stats.inUse,
                         total: stats.total,
-                        color: AppColors.inUse,
+                        color: context.colors.inUse,
                       ),
                       DistributionRow(
                         label: ToolStatus.available.label,
                         value: stats.available,
                         total: stats.total,
-                        color: AppColors.available,
+                        color: context.colors.available,
                       ),
                       DistributionRow(
                         label: ToolStatus.maintenance.label,
                         value: stats.maintenance,
                         total: stats.total,
-                        color: AppColors.maintenance,
+                        color: context.colors.maintenance,
                       ),
                       DistributionRow(
                         label: ToolStatus.missing.label,
                         value: stats.missing,
                         total: stats.total,
-                        color: AppColors.missing,
+                        color: context.colors.missing,
                       ),
                     ],
                   ),
@@ -110,7 +110,7 @@ class DashboardPage extends StatelessWidget {
                                 onTap: () => _openTool(context, movements[i].toolId),
                               ),
                               if (i != movements.length - 1)
-                                const Divider(color: AppColors.border),
+                                Divider(color: context.colors.border),
                             ],
                           ],
                         ),
@@ -187,18 +187,18 @@ class _ProfileButton extends StatelessWidget {
         children: <Widget>[
           Text(
             'CONTA',
-            style: AppText.label.copyWith(fontSize: 9),
+            style: context.texts.label.copyWith(fontSize: 9),
           ),
           const SizedBox(width: 7),
           CircleAvatar(
             radius: 12,
-            backgroundColor: AppColors.primary.withValues(alpha: 0.18),
+            backgroundColor: context.colors.primary.withValues(alpha: 0.18),
             child: Text(
               initials,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w800,
-                color: AppColors.primary,
+                color: context.colors.primary,
               ),
             ),
           ),
@@ -232,25 +232,25 @@ class _KpiGrid extends StatelessWidget {
         KpiCard(
           label: 'Total rastreadas',
           value: '${stats.total}',
-          color: AppColors.primary,
+          color: context.colors.primary,
           caption: Fmt.compactCurrency(stats.assetValue),
         ),
         KpiCard(
           label: 'Em uso agora',
           value: '${stats.inUse}',
-          color: AppColors.inUse,
+          color: context.colors.inUse,
           caption: 'Utilização ${Fmt.percent(stats.utilizationRate)}',
         ),
         KpiCard(
           label: 'Disponíveis',
           value: '${stats.available}',
-          color: AppColors.available,
+          color: context.colors.available,
           caption: 'Prontas para retirada',
         ),
         KpiCard(
           label: 'Não localizadas',
           value: '${stats.missing}',
-          color: AppColors.missing,
+          color: context.colors.missing,
           caption: stats.missing == 0 ? 'Cobertura total' : 'Verificar zonas',
         ),
       ],
@@ -275,7 +275,7 @@ class _OperationalIndicators extends StatelessWidget {
             ratio: stats.utilizationRate,
             value: Fmt.percent(stats.utilizationRate),
             label: 'Utilização',
-            color: AppColors.inUse,
+            color: context.colors.inUse,
             size: 96,
           ),
           const SizedBox(width: 18),
@@ -287,30 +287,30 @@ class _OperationalIndicators extends StatelessWidget {
                   label: 'Visibilidade RFID',
                   value: Fmt.percent(stats.visibilityRate),
                   color: stats.visibilityRate >= 0.9
-                      ? AppColors.available
-                      : AppColors.maintenance,
+                      ? context.colors.available
+                      : context.colors.maintenance,
                 ),
                 _IndicatorLine(
                   label: 'Patrimônio rastreado',
                   value: Fmt.compactCurrency(stats.trackedAssetValue),
-                  color: AppColors.textPrimary,
+                  color: context.colors.textPrimary,
                 ),
                 _IndicatorLine(
                   label: 'Movimentações hoje',
                   value: '${stats.movementsToday}',
-                  color: AppColors.textPrimary,
+                  color: context.colors.textPrimary,
                 ),
                 _IndicatorLine(
                   label: 'Manutenções vencidas',
                   value: '${stats.overdueMaintenance}',
                   color: stats.overdueMaintenance == 0
-                      ? AppColors.available
-                      : AppColors.maintenance,
+                      ? context.colors.available
+                      : context.colors.maintenance,
                 ),
                 _IndicatorLine(
                   label: 'Horas de uso hoje',
                   value: Fmt.duration(stats.usageMinutesToday),
-                  color: AppColors.textPrimary,
+                  color: context.colors.textPrimary,
                 ),
               ],
             ),
@@ -341,7 +341,7 @@ class _IndicatorLine extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: AppText.caption.copyWith(color: AppColors.textSecondary),
+              style: context.texts.caption.copyWith(color: context.colors.textSecondary),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -369,7 +369,7 @@ class _SyncFooter extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         StatusDot(
-          color: live ? AppColors.live : AppColors.textMuted,
+          color: live ? context.colors.live : context.colors.textMuted,
           size: 6,
         ),
         const SizedBox(width: 7),
@@ -378,7 +378,7 @@ class _SyncFooter extends StatelessWidget {
             live
                 ? 'Middleware RFID conectado · sync ${Fmt.clock(lastSync)}'
                 : 'Modo ao vivo pausado · sync ${Fmt.clock(lastSync)}',
-            style: AppText.codeMono.copyWith(fontSize: 10),
+            style: context.texts.code.copyWith(fontSize: 10),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

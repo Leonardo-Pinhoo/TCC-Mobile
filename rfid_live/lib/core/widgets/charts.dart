@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../theme/app_colors.dart';
+import '../theme/app_palette.dart';
 import '../theme/app_theme.dart';
 
 /// Linha "rótulo / barra proporcional / valor" da distribuição de status.
@@ -61,7 +61,7 @@ class DistributionRow extends StatelessWidget {
                 return LinearProgressIndicator(
                   value: animated,
                   minHeight: 3,
-                  backgroundColor: AppColors.surfaceAlt,
+                  backgroundColor: context.colors.surfaceAlt,
                   valueColor: AlwaysStoppedAnimation<Color>(color),
                 );
               },
@@ -87,14 +87,15 @@ class MetricRing extends StatelessWidget {
     required this.ratio,
     required this.label,
     required this.value,
-    this.color = AppColors.primary,
+    this.color,
     this.size = 108,
   });
 
   final double ratio;
   final String label;
   final String value;
-  final Color color;
+  /// Nulo usa o acento do tema.
+  final Color? color;
   final double size;
 
   @override
@@ -108,7 +109,11 @@ class MetricRing extends StatelessWidget {
         curve: Curves.easeOutCubic,
         builder: (BuildContext context, double animated, _) {
           return CustomPaint(
-            painter: _RingPainter(ratio: animated, color: color),
+            painter: _RingPainter(
+              ratio: animated,
+              color: color ?? context.colors.primary,
+              trackColor: context.colors.surfaceAlt,
+            ),
             child: Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: size * 0.24),
@@ -128,7 +133,7 @@ class MetricRing extends StatelessWidget {
                       child: Text(
                         label.toUpperCase(),
                         textAlign: TextAlign.center,
-                        style: AppText.label.copyWith(
+                        style: context.texts.label.copyWith(
                           fontSize: 9,
                           letterSpacing: 0.4,
                         ),
@@ -152,10 +157,15 @@ class MetricRing extends StatelessWidget {
 }
 
 class _RingPainter extends CustomPainter {
-  const _RingPainter({required this.ratio, required this.color});
+  const _RingPainter({
+    required this.ratio,
+    required this.color,
+    required this.trackColor,
+  });
 
   final double ratio;
   final Color color;
+  final Color trackColor;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -164,7 +174,7 @@ class _RingPainter extends CustomPainter {
     final Rect arcRect = rect.deflate(stroke / 2 + 1);
 
     final Paint track = Paint()
-      ..color = AppColors.surfaceAlt
+      ..color = trackColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round;
@@ -189,12 +199,13 @@ class HourlyBarChart extends StatelessWidget {
   const HourlyBarChart({
     super.key,
     required this.values,
-    this.color = AppColors.primary,
+    this.color,
     this.height = 120,
   });
 
   final List<int> values;
-  final Color color;
+  /// Nulo usa o acento do tema.
+  final Color? color;
   final double height;
 
   @override
@@ -231,8 +242,9 @@ class HourlyBarChart extends StatelessWidget {
                           height: math.max(3, animated * (height - 22)),
                           decoration: BoxDecoration(
                             color: value == 0
-                                ? AppColors.surfaceAlt
-                                : color.withValues(alpha: current ? 1 : 0.65),
+                                ? context.colors.surfaceAlt
+                                : (color ?? context.colors.primary)
+                                    .withValues(alpha: current ? 1 : 0.65),
                             borderRadius: BorderRadius.circular(2),
                           ),
                         );
@@ -242,7 +254,7 @@ class HourlyBarChart extends StatelessWidget {
                     if (hour % 6 == 0)
                       Text(
                         hour.toString().padLeft(2, '0'),
-                        style: AppText.label.copyWith(fontSize: 8),
+                        style: context.texts.label.copyWith(fontSize: 8),
                       )
                     else
                       const SizedBox(height: 10),
@@ -315,7 +327,7 @@ class RankingBar extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: ratio,
                     minHeight: 4,
-                    backgroundColor: AppColors.surfaceAlt,
+                    backgroundColor: context.colors.surfaceAlt,
                     valueColor: AlwaysStoppedAnimation<Color>(color),
                   ),
                 ),
@@ -325,7 +337,7 @@ class RankingBar extends StatelessWidget {
                 flex: 2,
                 child: Text(
                   caption,
-                  style: AppText.codeMono,
+                  style: context.texts.code,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.right,

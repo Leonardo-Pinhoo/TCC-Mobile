@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_theme.dart';
 import '../../state/auth_controller.dart';
 import '../../state/plant_controller.dart';
@@ -77,9 +77,9 @@ class _RegisterPageState extends State<RegisterPage> {
           style: AppText.title.copyWith(fontSize: 22),
         ),
         const SizedBox(height: 6),
-        const Text(
+        Text(
           'O cadastro fica vinculado à unidade industrial atual',
-          style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+          style: TextStyle(fontSize: 12, color: context.colors.textSecondary),
         ),
         const SizedBox(height: 24),
         Form(
@@ -126,12 +126,12 @@ class _RegisterPageState extends State<RegisterPage> {
                 label: 'Função na planta',
                 child: DropdownButtonFormField<String>(
                   initialValue: _role,
-                  dropdownColor: AppColors.surfaceAlt,
-                  style: const TextStyle(
+                  dropdownColor: context.colors.surfaceAlt,
+                  style: TextStyle(
                     fontSize: 14,
-                    color: AppColors.textPrimary,
+                    color: context.colors.textPrimary,
                   ),
-                  icon: const Icon(Icons.expand_more, color: AppColors.textMuted),
+                  icon: Icon(Icons.expand_more, color: context.colors.textMuted),
                   items: _roles
                       .map((String role) => DropdownMenuItem<String>(
                             value: role,
@@ -158,7 +158,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
                         size: 19,
-                        color: AppColors.textMuted,
+                        color: context.colors.textMuted,
                       ),
                     ),
                   ),
@@ -191,12 +191,12 @@ class _RegisterPageState extends State<RegisterPage> {
               FilledButton(
                 onPressed: auth.busy ? null : _submit,
                 child: auth.busy
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: AppColors.onPrimary,
+                          color: context.colors.onPrimary,
                         ),
                       )
                     : const Text('Criar conta'),

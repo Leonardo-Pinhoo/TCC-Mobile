@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/app_widgets.dart';
@@ -99,8 +99,8 @@ class _MovementsView extends StatelessWidget {
 
     return RefreshIndicator(
       onRefresh: plant.refresh,
-      color: AppColors.primary,
-      backgroundColor: AppColors.surface,
+      color: context.colors.primary,
+      backgroundColor: context.colors.surface,
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),
         children: <Widget>[
@@ -120,7 +120,7 @@ class _MovementsView extends StatelessWidget {
                       (MovementType type) => _TypeChip(
                         label: type.label,
                         selected: typeFilter == type,
-                        color: type.color,
+                        color: type.colorIn(context.colors),
                         onTap: () => onFilterChanged(type),
                       ),
                     ),
@@ -140,7 +140,7 @@ class _MovementsView extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 14),
                 child: SectionCard(
                   title: entry.key,
-                  trailing: Text('${entry.value.length}', style: AppText.label),
+                  trailing: Text('${entry.value.length}', style: context.texts.label),
                   child: Column(
                     children: <Widget>[
                       for (int i = 0; i < entry.value.length; i++) ...<Widget>[
@@ -155,7 +155,7 @@ class _MovementsView extends StatelessWidget {
                           ),
                         ),
                         if (i != entry.value.length - 1)
-                          const Divider(color: AppColors.border),
+                          Divider(color: context.colors.border),
                       ],
                     ],
                   ),
@@ -173,20 +173,24 @@ class _TypeChip extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
-    this.color = AppColors.primary,
+    this.color,
   });
 
   final String label;
   final bool selected;
   final VoidCallback onTap;
-  final Color color;
+
+  /// Nulo usa o acento do tema. Valor padrao de parametro precisa ser
+  /// constante, e a cor do tema nao e.
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
+    final Color accent = color ?? context.colors.primary;
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: Material(
-        color: selected ? color : AppColors.surface,
+        color: selected ? accent : context.colors.surface,
         borderRadius: BorderRadius.circular(999),
         child: InkWell(
           onTap: onTap,
@@ -196,14 +200,17 @@ class _TypeChip extends StatelessWidget {
             alignment: Alignment.center,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(999),
-              border: Border.all(color: selected ? color : AppColors.border),
+              border:
+                  Border.all(color: selected ? accent : context.colors.border),
             ),
             child: Text(
               label,
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: selected ? AppColors.onAccent(color) : AppColors.textSecondary,
+                color: selected
+                    ? context.colors.onAccent(accent)
+                    : context.colors.textSecondary,
               ),
             ),
           ),
@@ -241,7 +248,7 @@ class _IndicatorsView extends StatelessWidget {
               child: _MiniStat(
                 label: 'Movimentações hoje',
                 value: '${stats.movementsToday}',
-                color: AppColors.primary,
+                color: context.colors.primary,
               ),
             ),
             const SizedBox(width: 10),
@@ -249,7 +256,7 @@ class _IndicatorsView extends StatelessWidget {
               child: _MiniStat(
                 label: 'Horas de uso',
                 value: Fmt.duration(stats.usageMinutesToday),
-                color: AppColors.available,
+                color: context.colors.available,
               ),
             ),
           ],
@@ -257,7 +264,7 @@ class _IndicatorsView extends StatelessWidget {
         const SizedBox(height: 14),
         SectionCard(
           title: 'Movimentações por hora',
-          trailing: Text('24h', style: AppText.label),
+          trailing: Text('24h', style: context.texts.label),
           child: HourlyBarChart(values: byHour),
         ),
         const SizedBox(height: 14),
@@ -271,7 +278,7 @@ class _IndicatorsView extends StatelessWidget {
                     ratio: stats.readinessRate,
                     value: Fmt.percent(stats.readinessRate),
                     label: 'Prontidão',
-                    color: AppColors.available,
+                    color: context.colors.available,
                     size: 92,
                   ),
                 ),
@@ -282,7 +289,7 @@ class _IndicatorsView extends StatelessWidget {
                     ratio: stats.utilizationRate,
                     value: Fmt.percent(stats.utilizationRate),
                     label: 'Utilização',
-                    color: AppColors.inUse,
+                    color: context.colors.inUse,
                     size: 92,
                   ),
                 ),
@@ -306,7 +313,7 @@ class _IndicatorsView extends StatelessWidget {
                           caption: entry.key.id,
                           value: entry.value,
                           maxValue: maxRank,
-                          color: entry.key.status.color,
+                          color: entry.key.status.colorIn(context.colors),
                         ),
                       )
                       .toList(),
@@ -324,7 +331,7 @@ class _IndicatorsView extends StatelessWidget {
                         '${entry.value.length} de ${plant.tools.length}',
                     value: entry.value.length,
                     maxValue: maxZone,
-                    color: entry.key.accent,
+                    color: entry.key.accentIn(context.colors),
                   ),
                 )
                 .toList(),
@@ -342,14 +349,14 @@ class _IndicatorsView extends StatelessWidget {
               _KeyValue(
                 label: 'Valor com leitura ativa',
                 value: Fmt.currency(stats.trackedAssetValue),
-                color: AppColors.available,
+                color: context.colors.available,
               ),
               _KeyValue(
                 label: 'Exposição sem rastreio',
                 value: Fmt.currency(stats.assetValue - stats.trackedAssetValue),
                 color: stats.assetValue == stats.trackedAssetValue
-                    ? AppColors.available
-                    : AppColors.missing,
+                    ? context.colors.available
+                    : context.colors.missing,
               ),
               _KeyValue(
                 label: 'Visibilidade das etiquetas',
@@ -381,7 +388,7 @@ class _MiniStat extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(label.toUpperCase(), style: AppText.label),
+          Text(label.toUpperCase(), style: context.texts.label),
           const SizedBox(height: 8),
           Text(value, style: AppText.metric.copyWith(fontSize: 22, color: color)),
         ],
@@ -406,7 +413,7 @@ class _KeyValue extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: AppText.caption.copyWith(color: AppColors.textSecondary),
+              style: context.texts.caption.copyWith(color: context.colors.textSecondary),
             ),
           ),
           const SizedBox(width: 10),

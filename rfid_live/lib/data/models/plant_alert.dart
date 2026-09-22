@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 
 enum AlertSeverity { critical, warning, info }
 
@@ -11,10 +11,10 @@ extension AlertSeverityX on AlertSeverity {
         AlertSeverity.info => 'Informativo',
       };
 
-  Color get color => switch (this) {
-        AlertSeverity.critical => AppColors.critical,
-        AlertSeverity.warning => AppColors.warning,
-        AlertSeverity.info => AppColors.info,
+  Color colorIn(AppPalette palette) => switch (this) {
+        AlertSeverity.critical => palette.critical,
+        AlertSeverity.warning => palette.warning,
+        AlertSeverity.info => palette.info,
       };
 
   IconData get icon => switch (this) {

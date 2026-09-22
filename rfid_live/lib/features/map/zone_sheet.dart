@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/app_widgets.dart';
@@ -15,7 +15,7 @@ import '../inventory/tool_details_page.dart';
 Future<void> showZoneSheet(BuildContext context, Zone zone) {
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: AppColors.surface,
+    backgroundColor: context.colors.surface,
     isScrollControlled: true,
     builder: (BuildContext context) => _ZoneSheet(zone: zone),
   );
@@ -47,7 +47,7 @@ class _ZoneSheet extends StatelessWidget {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  StatusDot(color: zone.accent, size: 9),
+                  StatusDot(color: zone.accentIn(context.colors), size: 9),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Column(
@@ -59,8 +59,8 @@ class _ZoneSheet extends StatelessWidget {
                         ),
                         Text(
                           zone.description,
-                          style: AppText.caption.copyWith(
-                            color: AppColors.textMuted,
+                          style: context.texts.caption.copyWith(
+                            color: context.colors.textMuted,
                           ),
                         ),
                       ],
@@ -68,14 +68,14 @@ class _ZoneSheet extends StatelessWidget {
                   ),
                   InfoPill(
                     label: '${tools.length} ferramenta${tools.length == 1 ? '' : 's'}',
-                    color: zone.accent,
+                    color: zone.accentIn(context.colors),
                   ),
                 ],
               ),
               const SizedBox(height: 14),
               if (antenna != null)
                 SurfaceCard(
-                  color: AppColors.surfaceAlt,
+                  color: context.colors.surfaceAlt,
                   padding: const EdgeInsets.all(12),
                   child: Row(
                     children: <Widget>[
@@ -83,8 +83,8 @@ class _ZoneSheet extends StatelessWidget {
                         Icons.settings_input_antenna,
                         size: 18,
                         color: antenna.lowBattery
-                            ? AppColors.warning
-                            : AppColors.available,
+                            ? context.colors.warning
+                            : context.colors.available,
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -96,7 +96,7 @@ class _ZoneSheet extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               'RSSI ${antenna.rssi} dBm · ${antenna.readsToday} leituras hoje',
-                              style: AppText.codeMono,
+                              style: context.texts.code,
                             ),
                           ],
                         ),
@@ -105,15 +105,15 @@ class _ZoneSheet extends StatelessWidget {
                         '${antenna.battery}%',
                         style: AppText.value.copyWith(
                           color: antenna.lowBattery
-                              ? AppColors.warning
-                              : AppColors.available,
+                              ? context.colors.warning
+                              : context.colors.available,
                         ),
                       ),
                     ],
                   ),
                 ),
               const SizedBox(height: 14),
-              Text('FERRAMENTAS NA ZONA', style: AppText.labelStrong),
+              Text('FERRAMENTAS NA ZONA', style: context.texts.labelStrong),
               const SizedBox(height: 6),
               Flexible(
                 child: tools.isEmpty
@@ -126,7 +126,7 @@ class _ZoneSheet extends StatelessWidget {
                         shrinkWrap: true,
                         itemCount: tools.length,
                         separatorBuilder: (_, _) =>
-                            const Divider(color: AppColors.border),
+                            Divider(color: context.colors.border),
                         itemBuilder: (BuildContext context, int index) {
                           final Tool tool = tools[index];
                           return ListTile(
@@ -141,18 +141,18 @@ class _ZoneSheet extends StatelessWidget {
                             },
                             leading: Icon(
                               tool.status.icon,
-                              color: tool.status.color,
+                              color: tool.status.colorIn(context.colors),
                               size: 20,
                             ),
                             title: Text(tool.name, style: AppText.value),
                             subtitle: Text(
                               '${tool.id} · ${Fmt.timeAgo(tool.lastRead)}'
                               '${tool.holder != null ? ' · ${tool.holder}' : ''}',
-                              style: AppText.codeMono,
+                              style: context.texts.code,
                             ),
                             trailing: StatusBadge(
                               label: tool.status.shortLabel,
-                              color: tool.status.color,
+                              color: tool.status.colorIn(context.colors),
                               dense: true,
                             ),
                           );

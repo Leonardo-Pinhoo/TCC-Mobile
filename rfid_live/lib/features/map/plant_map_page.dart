@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/app_widgets.dart';
@@ -32,8 +32,8 @@ class PlantMapPage extends StatelessWidget {
         Expanded(
           child: RefreshIndicator(
             onRefresh: plant.refresh,
-            color: AppColors.primary,
-            backgroundColor: AppColors.surface,
+            color: context.colors.primary,
+            backgroundColor: context.colors.surface,
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),
               children: <Widget>[
@@ -41,20 +41,20 @@ class PlantMapPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      const Text(
+                      Text(
                         'PLANTA INDUSTRIAL — TEMPO REAL',
-                        style: AppText.labelStrong,
+                        style: context.texts.labelStrong,
                       ),
                       const SizedBox(height: 10),
-                      const Wrap(
+                      Wrap(
                         spacing: 14,
                         runSpacing: 6,
                         children: <Widget>[
-                          _LegendItem(color: AppColors.inUse, label: 'Em uso'),
-                          _LegendItem(color: AppColors.available, label: 'Disponível'),
-                          _LegendItem(color: AppColors.missing, label: 'Perdida'),
+                          _LegendItem(color: context.colors.inUse, label: 'Em uso'),
+                          _LegendItem(color: context.colors.available, label: 'Disponível'),
+                          _LegendItem(color: context.colors.missing, label: 'Perdida'),
                           _LegendItem(
-                            color: AppColors.textMuted,
+                            color: context.colors.textMuted,
                             label: 'Antena RFID',
                           ),
                         ],
@@ -73,7 +73,7 @@ class PlantMapPage extends StatelessWidget {
                       Center(
                         child: Text(
                           'Toque em uma zona para ver detalhes',
-                          style: AppText.codeMono.copyWith(fontSize: 10),
+                          style: context.texts.code.copyWith(fontSize: 10),
                         ),
                       ),
                     ],
@@ -114,7 +114,7 @@ class _LegendItem extends StatelessWidget {
       children: <Widget>[
         StatusDot(color: color, size: 6),
         const SizedBox(width: 4),
-        Text(label, style: AppText.label.copyWith(fontSize: 9)),
+        Text(label, style: context.texts.label.copyWith(fontSize: 9)),
       ],
     );
   }
@@ -195,11 +195,11 @@ class _ZoneTile extends StatelessWidget {
       width: fullWidth ? double.infinity : null,
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 16),
       decoration: BoxDecoration(
-        color: zone.accent.withValues(alpha: 0.06),
+        color: zone.accentIn(context.colors).withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(AppText.radius),
         border: zone.dashedBorder
             ? null
-            : Border.all(color: zone.accent.withValues(alpha: 0.65)),
+            : Border.all(color: zone.accentIn(context.colors).withValues(alpha: 0.65)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,7 +208,7 @@ class _ZoneTile extends StatelessWidget {
           Text(
             zone.name,
             style: TextStyle(
-              color: zone.accent,
+              color: zone.accentIn(context.colors),
               fontSize: 14,
               fontWeight: FontWeight.w700,
             ),
@@ -217,7 +217,7 @@ class _ZoneTile extends StatelessWidget {
           Row(
             children: <Widget>[
               StatusDot(
-                color: inUse > 0 ? AppColors.inUse : zone.accent,
+                color: inUse > 0 ? context.colors.inUse : zone.accentIn(context.colors),
                 size: 6,
               ),
               const SizedBox(width: 7),
@@ -225,8 +225,8 @@ class _ZoneTile extends StatelessWidget {
                 child: Text(
                   '${tools.length} ferramenta${tools.length == 1 ? '' : 's'}'
                   '${available > 0 ? ' ($available disponíve${available == 1 ? 'l' : 'is'})' : ''}',
-                  style: AppText.caption.copyWith(
-                    color: AppColors.textSecondary,
+                  style: context.texts.caption.copyWith(
+                    color: context.colors.textSecondary,
                     fontSize: 11.5,
                   ),
                   maxLines: 2,
@@ -244,7 +244,7 @@ class _ZoneTile extends StatelessWidget {
       child: zone.dashedBorder
           ? CustomPaint(
               foregroundPainter: DashedBorderPainter(
-                color: zone.accent.withValues(alpha: 0.75),
+                color: zone.accentIn(context.colors).withValues(alpha: 0.75),
               ),
               child: content,
             )
@@ -272,7 +272,7 @@ class _ZoneCountRow extends StatelessWidget {
               width: 9,
               height: 9,
               decoration: BoxDecoration(
-                color: zone.accent,
+                color: zone.accentIn(context.colors),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -281,7 +281,7 @@ class _ZoneCountRow extends StatelessWidget {
             Text(
               '${tools.length}',
               style: TextStyle(
-                color: zone.accent,
+                color: zone.accentIn(context.colors),
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
               ),
@@ -308,7 +308,7 @@ class _LiveReadingsCard extends StatelessWidget {
       child: latest.isEmpty
           ? Text(
               'Aguardando a próxima varredura das antenas...',
-              style: AppText.codeMono,
+              style: context.texts.code,
             )
           : Column(
               children: latest
@@ -319,14 +319,14 @@ class _LiveReadingsCard extends StatelessWidget {
                         children: <Widget>[
                           Text(
                             Fmt.clock(reading.timestamp),
-                            style: AppText.codeMono.copyWith(fontSize: 10),
+                            style: context.texts.code.copyWith(fontSize: 10),
                           ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
                               '${reading.tag}  ${reading.toolName}',
-                              style: AppText.codeMono.copyWith(
-                                color: AppColors.textSecondary,
+                              style: context.texts.code.copyWith(
+                                color: context.colors.textSecondary,
                                 fontSize: 10.5,
                               ),
                               maxLines: 1,
@@ -336,9 +336,9 @@ class _LiveReadingsCard extends StatelessWidget {
                           const SizedBox(width: 8),
                           Text(
                             '${reading.rssi} dBm',
-                            style: AppText.codeMono.copyWith(
+                            style: context.texts.code.copyWith(
                               fontSize: 10,
-                              color: AppColors.available,
+                              color: context.colors.available,
                             ),
                           ),
                         ],

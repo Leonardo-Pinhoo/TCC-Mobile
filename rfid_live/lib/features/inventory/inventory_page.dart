@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/app_widgets.dart';
 import '../../core/widgets/live_header.dart';
@@ -65,7 +65,7 @@ class _InventoryPageState extends State<InventoryPage> {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => showNewToolSheet(context),
         icon: const Icon(Icons.add, size: 20),
@@ -89,10 +89,10 @@ class _InventoryPageState extends State<InventoryPage> {
               style: const TextStyle(fontSize: 14),
               decoration: InputDecoration(
                 hintText: 'Buscar ferramenta, ID ou tag...',
-                prefixIcon: const Icon(
+                prefixIcon: Icon(
                   Icons.search,
                   size: 19,
-                  color: AppColors.textMuted,
+                  color: context.colors.textMuted,
                 ),
                 suffixIcon: _search.text.isEmpty
                     ? null
@@ -101,10 +101,10 @@ class _InventoryPageState extends State<InventoryPage> {
                           _search.clear();
                           setState(() {});
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.close,
                           size: 18,
-                          color: AppColors.textMuted,
+                          color: context.colors.textMuted,
                         ),
                       ),
                 contentPadding:
@@ -122,14 +122,14 @@ class _InventoryPageState extends State<InventoryPage> {
                 _FilterChip(
                   label: 'Todas',
                   selected: _status == null,
-                  color: AppColors.primary,
+                  color: context.colors.primary,
                   onTap: () => setState(() => _status = null),
                 ),
                 ...ToolStatus.values.map(
                   (ToolStatus status) => _FilterChip(
                     label: status.shortLabel,
                     selected: _status == status,
-                    color: status.color,
+                    color: status.colorIn(context.colors),
                     onTap: () => setState(() => _status = status),
                   ),
                 ),
@@ -144,30 +144,30 @@ class _InventoryPageState extends State<InventoryPage> {
                 Expanded(
                   child: Text(
                     '${tools.length} de ${plant.tools.length} ferramentas',
-                    style: AppText.label,
+                    style: context.texts.label,
                   ),
                 ),
                 PopupMenuButton<ToolSort>(
                   initialValue: _sort,
-                  color: AppColors.surfaceAlt,
+                  color: context.colors.surfaceAlt,
                   tooltip: 'Ordenar',
                   onSelected: (ToolSort value) => setState(() => _sort = value),
                   itemBuilder: (BuildContext context) => ToolSort.values
                       .map(
                         (ToolSort sort) => PopupMenuItem<ToolSort>(
                           value: sort,
-                          child: Text(sort.label, style: AppText.caption),
+                          child: Text(sort.label, style: context.texts.caption),
                         ),
                       )
                       .toList(),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Text('ORDENAR', style: AppText.label),
-                      const Icon(
+                      Text('ORDENAR', style: context.texts.label),
+                      Icon(
                         Icons.expand_more,
                         size: 16,
-                        color: AppColors.textMuted,
+                        color: context.colors.textMuted,
                       ),
                     ],
                   ),
@@ -178,8 +178,8 @@ class _InventoryPageState extends State<InventoryPage> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: plant.refresh,
-              color: AppColors.primary,
-              backgroundColor: AppColors.surface,
+              color: context.colors.primary,
+              backgroundColor: context.colors.surface,
               child: tools.isEmpty
                   ? ListView(
                       children: <Widget>[
@@ -244,7 +244,7 @@ class _FilterChip extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: Material(
-        color: selected ? color : AppColors.surface,
+        color: selected ? color : context.colors.surface,
         borderRadius: BorderRadius.circular(999),
         child: InkWell(
           onTap: onTap,
@@ -255,7 +255,7 @@ class _FilterChip extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(999),
               border: Border.all(
-                color: selected ? color : AppColors.border,
+                color: selected ? color : context.colors.border,
               ),
             ),
             child: Text(
@@ -263,7 +263,7 @@ class _FilterChip extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: selected ? AppColors.onAccent(color) : AppColors.textSecondary,
+                color: selected ? context.colors.onAccent(color) : context.colors.textSecondary,
               ),
             ),
           ),

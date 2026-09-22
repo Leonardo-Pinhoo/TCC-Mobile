@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'app_colors.dart';
+import 'app_palette.dart';
 
 /// Estilos tipograficos reaproveitados nas telas.
+///
+/// Sao apenas tipografia: familia, tamanho, peso e espacamento. A cor vem do
+/// tema — ou herdada do [TextTheme], quando o estilo usa a cor de texto
+/// principal, ou por [AppTexts], quando usa uma cor secundaria.
 class AppText {
   const AppText._();
 
@@ -23,7 +27,6 @@ class AppText {
     height: 1.2,
     fontWeight: FontWeight.w500,
     letterSpacing: 1.8,
-    color: AppColors.textSecondary,
   );
 
   static const TextStyle labelStrong = TextStyle(
@@ -31,7 +34,6 @@ class AppText {
     height: 1.2,
     fontWeight: FontWeight.w600,
     letterSpacing: 1.6,
-    color: AppColors.textSecondary,
   );
 
   /// Texto dos botoes: pequeno e espacado como as pilulas do site.
@@ -46,7 +48,6 @@ class AppText {
     fontSize: 13,
     height: 1.3,
     fontWeight: FontWeight.w600,
-    color: AppColors.textPrimary,
   );
 
   // Alata so existe no peso Regular: pesos maiores gerariam negrito
@@ -56,7 +57,6 @@ class AppText {
     fontSize: 20,
     height: 1.2,
     fontWeight: FontWeight.w400,
-    color: AppColors.textPrimary,
   );
 
   static const TextStyle cardTitle = TextStyle(
@@ -64,7 +64,6 @@ class AppText {
     fontSize: 15,
     height: 1.25,
     fontWeight: FontWeight.w400,
-    color: AppColors.textPrimary,
   );
 
   static const TextStyle metric = TextStyle(
@@ -80,98 +79,144 @@ class AppText {
     fontSize: 11,
     height: 1.3,
     letterSpacing: 0.4,
-    color: AppColors.textMuted,
   );
 
   static const TextStyle caption = TextStyle(
     fontSize: 12,
     height: 1.35,
-    color: AppColors.textSecondary,
   );
+}
+
+/// Os estilos de [AppText] que nao usam a cor de texto principal, ja tingidos
+/// com a paleta do tema corrente. Lidos via `context.texts`.
+@immutable
+class AppTexts {
+  const AppTexts(this._palette);
+
+  final AppPalette _palette;
+
+  TextStyle get label => AppText.label.copyWith(color: _palette.textSecondary);
+  TextStyle get labelStrong =>
+      AppText.labelStrong.copyWith(color: _palette.textSecondary);
+  TextStyle get code => AppText.codeMono.copyWith(color: _palette.textMuted);
+  TextStyle get caption =>
+      AppText.caption.copyWith(color: _palette.textSecondary);
+}
+
+extension AppTextsContext on BuildContext {
+  AppTexts get texts => AppTexts(colors);
 }
 
 class AppTheme {
   const AppTheme._();
 
-  static const SystemUiOverlayStyle overlayStyle = SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.light,
-    statusBarBrightness: Brightness.dark,
-    systemNavigationBarColor: AppColors.background,
-    systemNavigationBarIconBrightness: Brightness.light,
-  );
+  static ThemeData get dark =>
+      _build(AppPalette.dark, Brightness.dark);
 
-  static ThemeData get dark {
-    final ColorScheme scheme = const ColorScheme.dark().copyWith(
-      primary: AppColors.primary,
-      onPrimary: AppColors.onPrimary,
-      secondary: AppColors.available,
-      surface: AppColors.surface,
-      onSurface: AppColors.textPrimary,
-      error: AppColors.missing,
+  static ThemeData get light =>
+      _build(AppPalette.light, Brightness.light);
+
+  /// Icones da barra de status e da barra de navegacao do sistema.
+  ///
+  /// Precisa acompanhar o tema: icones claros sobre o escuro, escuros sobre o
+  /// claro. Entra pelo [AppBarTheme] em vez de uma chamada solta a
+  /// `SystemChrome` justamente para trocar junto com o tema.
+  static SystemUiOverlayStyle overlayStyleFor(
+    AppPalette palette,
+    Brightness brightness,
+  ) {
+    final bool isDark = brightness == Brightness.dark;
+    return SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+      systemNavigationBarColor: palette.background,
+      systemNavigationBarIconBrightness:
+          isDark ? Brightness.light : Brightness.dark,
+    );
+  }
+
+  /// Fabrica unica dos dois temas.
+  ///
+  /// Dois [ThemeData] escritos a mao divergiriam na primeira manutencao —
+  /// alguem ajusta o raio de um botao num e esquece o outro. Aqui a unica
+  /// diferenca entre claro e escuro e a paleta.
+  static ThemeData _build(AppPalette palette, Brightness brightness) {
+    final bool isDark = brightness == Brightness.dark;
+    final ColorScheme scheme = (isDark
+            ? const ColorScheme.dark()
+            : const ColorScheme.light())
+        .copyWith(
+      primary: palette.primary,
+      onPrimary: palette.onPrimary,
+      secondary: palette.available,
+      surface: palette.surface,
+      onSurface: palette.textPrimary,
+      error: palette.missing,
     );
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: brightness,
       colorScheme: scheme,
-      scaffoldBackgroundColor: AppColors.background,
-      canvasColor: AppColors.background,
+      extensions: <ThemeExtension<dynamic>>[palette],
+      scaffoldBackgroundColor: palette.background,
+      canvasColor: palette.background,
       fontFamily: 'Inter',
       splashFactory: InkSparkle.splashFactory,
       textTheme: const TextTheme().apply(
-        bodyColor: AppColors.textPrimary,
-        displayColor: AppColors.textPrimary,
+        bodyColor: palette.textPrimary,
+        displayColor: palette.textPrimary,
         fontFamily: 'Inter',
       ),
-      dividerTheme: const DividerThemeData(
-        color: AppColors.border,
+      dividerTheme: DividerThemeData(
+        color: palette.border,
         thickness: 1,
         space: 1,
       ),
       cardTheme: CardThemeData(
-        color: AppColors.surface,
+        color: palette.surface,
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppText.radius),
-          side: const BorderSide(color: AppColors.border),
+          side: BorderSide(color: palette.border),
         ),
       ),
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        systemOverlayStyle: overlayStyle,
-        titleTextStyle: AppText.title,
-        iconTheme: IconThemeData(color: AppColors.textSecondary),
+        systemOverlayStyle: overlayStyleFor(palette, brightness),
+        titleTextStyle: AppText.title.copyWith(color: palette.textPrimary),
+        iconTheme: IconThemeData(color: palette.textSecondary),
       ),
       // Campos como no formulario do site: sem caixa, so uma linha inferior
-      // que fica branca ao receber foco.
+      // que fica com a cor de acento ao receber foco.
       inputDecorationTheme: InputDecorationTheme(
         filled: false,
-        hintStyle: const TextStyle(
-          color: AppColors.textMuted,
+        hintStyle: TextStyle(
+          color: palette.textMuted,
           fontSize: 15,
           fontWeight: FontWeight.w300,
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 14),
-        border: _inputBorder(AppColors.border),
-        enabledBorder: _inputBorder(AppColors.border),
-        focusedBorder: _inputBorder(AppColors.primary),
-        errorBorder: _inputBorder(AppColors.missing),
-        focusedErrorBorder: _inputBorder(AppColors.missing),
-        errorStyle: const TextStyle(color: AppColors.missing, fontSize: 11),
+        border: _inputBorder(palette.border),
+        enabledBorder: _inputBorder(palette.border),
+        focusedBorder: _inputBorder(palette.primary),
+        errorBorder: _inputBorder(palette.missing),
+        focusedErrorBorder: _inputBorder(palette.missing),
+        errorStyle: TextStyle(color: palette.missing, fontSize: 11),
       ),
-      // Botoes em pilula como no site: o principal e branco com texto preto,
-      // o secundario ("ghost") e transparente com borda sutil.
+      // Botoes em pilula como no site: o principal usa o acento com texto
+      // contrastante, o secundario ("ghost") e transparente com borda sutil.
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.onPrimary,
-          disabledBackgroundColor: AppColors.surfaceAlt,
-          disabledForegroundColor: AppColors.textMuted,
+          backgroundColor: palette.primary,
+          foregroundColor: palette.onPrimary,
+          disabledBackgroundColor: palette.surfaceAlt,
+          disabledForegroundColor: palette.textMuted,
           minimumSize: const Size.fromHeight(52),
           textStyle: AppText.button,
           shape: const StadiumBorder(),
@@ -179,87 +224,87 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.textPrimary,
+          foregroundColor: palette.textPrimary,
           minimumSize: const Size.fromHeight(52),
-          side: const BorderSide(color: AppColors.borderStrong),
+          side: BorderSide(color: palette.borderStrong),
           textStyle: AppText.button,
           shape: const StadiumBorder(),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.textPrimary,
+          foregroundColor: palette.textPrimary,
           textStyle: AppText.button.copyWith(fontSize: 12),
           shape: const StadiumBorder(),
         ),
       ),
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.onPrimary,
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: palette.primary,
+        foregroundColor: palette.onPrimary,
         elevation: 0,
         highlightElevation: 0,
-        shape: StadiumBorder(),
+        shape: const StadiumBorder(),
       ),
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.resolveWith<Color>(
             (Set<WidgetState> states) => states.contains(WidgetState.selected)
-                ? AppColors.primary
-                : AppColors.surface,
+                ? palette.primary
+                : palette.surface,
           ),
           foregroundColor: WidgetStateProperty.resolveWith<Color>(
             (Set<WidgetState> states) => states.contains(WidgetState.selected)
-                ? AppColors.onPrimary
-                : AppColors.textSecondary,
+                ? palette.onPrimary
+                : palette.textSecondary,
           ),
-          side: const WidgetStatePropertyAll<BorderSide>(
-            BorderSide(color: AppColors.border),
+          side: WidgetStatePropertyAll<BorderSide>(
+            BorderSide(color: palette.border),
           ),
           textStyle: const WidgetStatePropertyAll<TextStyle>(
             TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
           ),
         ),
       ),
-      chipTheme: const ChipThemeData(
-        backgroundColor: AppColors.surface,
-        selectedColor: AppColors.primary,
-        side: BorderSide(color: AppColors.border),
-        shape: StadiumBorder(),
+      chipTheme: ChipThemeData(
+        backgroundColor: palette.surface,
+        selectedColor: palette.primary,
+        side: BorderSide(color: palette.border),
+        shape: const StadiumBorder(),
         showCheckmark: false,
       ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.surfaceAlt,
-        contentTextStyle: const TextStyle(color: AppColors.textPrimary, fontSize: 13),
+        backgroundColor: palette.surfaceAlt,
+        contentTextStyle: TextStyle(color: palette.textPrimary, fontSize: 13),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppText.radius),
-          side: const BorderSide(color: AppColors.border),
+          side: BorderSide(color: palette.border),
         ),
       ),
-      bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: AppColors.surface,
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: palette.surface,
         surfaceTintColor: Colors.transparent,
         showDragHandle: true,
-        dragHandleColor: AppColors.borderStrong,
-        shape: RoundedRectangleBorder(
+        dragHandleColor: palette.borderStrong,
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
         ),
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: AppColors.surface,
+        backgroundColor: palette.surface,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppText.radius),
-          side: const BorderSide(color: AppColors.border),
+          side: BorderSide(color: palette.border),
         ),
       ),
-      progressIndicatorTheme: const ProgressIndicatorThemeData(
-        color: AppColors.primary,
-        linearTrackColor: AppColors.surfaceAlt,
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: palette.primary,
+        linearTrackColor: palette.surfaceAlt,
       ),
       scrollbarTheme: ScrollbarThemeData(
         thumbColor: WidgetStatePropertyAll<Color>(
-          AppColors.borderStrong.withValues(alpha: 0.8),
+          palette.borderStrong.withValues(alpha: 0.8),
         ),
       ),
     );

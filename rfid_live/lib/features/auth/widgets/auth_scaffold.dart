@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/app_widgets.dart';
 
@@ -19,29 +19,29 @@ class AppBrand extends StatelessWidget {
         Container(
           width: 54,
           height: 54,
-          decoration: const BoxDecoration(
-            color: AppColors.primary,
+          decoration: BoxDecoration(
+            color: context.colors.primary,
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.sensors, color: AppColors.onPrimary, size: 28),
+          child: Icon(Icons.sensors, color: context.colors.onPrimary, size: 28),
         ),
         const SizedBox(height: 18),
-        const Text(
+        Text(
           'RFID LIVE',
           style: TextStyle(
             fontFamily: AppText.display,
             fontSize: 24,
             letterSpacing: 2.5,
-            color: AppColors.textPrimary,
+            color: context.colors.textPrimary,
           ),
         ),
         const SizedBox(height: 8),
-        const Text(
+        Text(
           'Rastreamento de Ferramentas',
           style: TextStyle(
             fontSize: 12,
             letterSpacing: 0.4,
-            color: AppColors.textSecondary,
+            color: context.colors.textSecondary,
           ),
         ),
         const SizedBox(height: 14),
@@ -52,7 +52,7 @@ class AppBrand extends StatelessWidget {
             const SizedBox(width: 7),
             Text(
               '$antennasOnline antenas online · API conectada',
-              style: AppText.codeMono.copyWith(color: AppColors.textSecondary),
+              style: context.texts.code.copyWith(color: context.colors.textSecondary),
             ),
           ],
         ),
@@ -77,7 +77,7 @@ class LabeledField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(label.toUpperCase(), style: AppText.label),
+        Text(label.toUpperCase(), style: context.texts.label),
         const SizedBox(height: 7),
         child,
       ],
@@ -95,13 +95,13 @@ class AuthScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: <Color>[AppColors.backgroundTop, AppColors.background],
+            colors: <Color>[context.colors.backgroundTop, context.colors.background],
             stops: <double>[0, 0.55],
           ),
         ),
@@ -118,14 +118,14 @@ class AuthScaffold extends StatelessWidget {
                       children: <Widget>[
                         ...children,
                         const SizedBox(height: 28),
-                        const Text(
+                        Text(
                           'TCC RFID 2025 · Sistema Inteligente Industrial',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: AppText.mono,
                             fontSize: 10,
                             letterSpacing: 0.4,
-                            color: AppColors.textMuted,
+                            color: context.colors.textMuted,
                           ),
                         ),
                       ],
@@ -139,8 +139,8 @@ class AuthScaffold extends StatelessWidget {
                   top: 4,
                   child: IconButton(
                     onPressed: onBack,
-                    icon: const Icon(Icons.arrow_back,
-                        color: AppColors.textSecondary),
+                    icon: Icon(Icons.arrow_back,
+                        color: context.colors.textSecondary),
                     tooltip: 'Voltar',
                   ),
                 ),

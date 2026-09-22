@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/app_widgets.dart';
@@ -34,15 +34,15 @@ class KpiCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(label.toUpperCase(), style: AppText.label),
+          Text(label.toUpperCase(), style: context.texts.label),
           const SizedBox(height: 10),
           Text(value, style: AppText.metric.copyWith(color: color)),
           if (caption != null) ...<Widget>[
             const SizedBox(height: 4),
             Text(
               caption!,
-              style: AppText.caption.copyWith(
-                color: AppColors.textMuted,
+              style: context.texts.caption.copyWith(
+                color: context.colors.textMuted,
                 fontSize: 11,
               ),
               maxLines: 1,
@@ -90,7 +90,7 @@ class MovementRow extends StatelessWidget {
           children: <Widget>[
             Row(
               children: <Widget>[
-                Icon(movement.type.icon, size: 14, color: movement.type.color),
+                Icon(movement.type.icon, size: 14, color: movement.type.colorIn(context.colors)),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -105,7 +105,7 @@ class MovementRow extends StatelessWidget {
                   showDay
                       ? '${Fmt.dayLabel(movement.timestamp)} ${Fmt.hhmm(movement.timestamp)}'
                       : Fmt.hhmm(movement.timestamp),
-                  style: AppText.codeMono,
+                  style: context.texts.code,
                 ),
               ],
             ),
@@ -118,24 +118,24 @@ class MovementRow extends StatelessWidget {
                   if (hasOrigin) ...<Widget>[
                     Text(
                       from.name,
-                      style: AppText.caption.copyWith(color: from.accent),
+                      style: context.texts.caption.copyWith(color: from.accentIn(context.colors)),
                     ),
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.symmetric(horizontal: 6),
                       child: Icon(
                         Icons.arrow_right_alt,
                         size: 15,
-                        color: AppColors.textMuted,
+                        color: context.colors.textMuted,
                       ),
                     ),
                   ],
                   Text(
                     to.name,
-                    style: AppText.caption.copyWith(color: to.accent),
+                    style: context.texts.caption.copyWith(color: to.accentIn(context.colors)),
                   ),
                   Text(
                     ' · ${movement.user}',
-                    style: AppText.caption.copyWith(color: AppColors.textMuted),
+                    style: context.texts.caption.copyWith(color: context.colors.textMuted),
                   ),
                 ],
               ),
@@ -165,7 +165,7 @@ class AlertRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color color =
-        alert.resolved ? AppColors.textMuted : alert.severity.color;
+        alert.resolved ? context.colors.textMuted : alert.severity.colorIn(context.colors);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -194,8 +194,8 @@ class AlertRow extends StatelessWidget {
                         alert.title,
                         style: AppText.value.copyWith(
                           color: alert.resolved
-                              ? AppColors.textSecondary
-                              : AppColors.textPrimary,
+                              ? context.colors.textSecondary
+                              : context.colors.textPrimary,
                           decoration: alert.resolved
                               ? TextDecoration.lineThrough
                               : null,
@@ -204,8 +204,8 @@ class AlertRow extends StatelessWidget {
                       const SizedBox(height: 3),
                       Text(
                         alert.description,
-                        style: AppText.caption.copyWith(
-                          color: AppColors.textMuted,
+                        style: context.texts.caption.copyWith(
+                          color: context.colors.textMuted,
                           fontSize: 11.5,
                         ),
                       ),
@@ -213,7 +213,7 @@ class AlertRow extends StatelessWidget {
                         const SizedBox(height: 6),
                         Text(
                           '${alert.severity.label} · ${Fmt.timeAgo(alert.createdAt)}',
-                          style: AppText.codeMono.copyWith(fontSize: 10),
+                          style: context.texts.code.copyWith(fontSize: 10),
                         ),
                       ],
                     ],
@@ -224,10 +224,10 @@ class AlertRow extends StatelessWidget {
                     onPressed: onResolve,
                     tooltip: 'Marcar como resolvido',
                     visualDensity: VisualDensity.compact,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.check_circle_outline,
                       size: 19,
-                      color: AppColors.textMuted,
+                      color: context.colors.textMuted,
                     ),
                   ),
               ],

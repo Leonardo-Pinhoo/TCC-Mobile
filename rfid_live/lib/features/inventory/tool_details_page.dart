@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/app_widgets.dart';
@@ -67,7 +67,7 @@ class _ToolDetailsPageState extends State<ToolDetailsPage> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.colors.background,
       appBar: AppBar(
         title: Column(
           mainAxisSize: MainAxisSize.min,
@@ -77,7 +77,7 @@ class _ToolDetailsPageState extends State<ToolDetailsPage> {
             if (widget.toolIds.length > 1)
               Text(
                 '${_index + 1} de ${widget.toolIds.length}',
-                style: AppText.label,
+                style: context.texts.label,
               ),
           ],
         ),
@@ -143,12 +143,12 @@ class _ToolDetailsBody extends StatelessWidget {
                   const SizedBox(width: 10),
                   StatusBadge(
                     label: tool.status.label,
-                    color: tool.status.color,
+                    color: tool.status.colorIn(context.colors),
                   ),
                 ],
               ),
               const SizedBox(height: 8),
-              Text(tool.tag, style: AppText.codeMono),
+              Text(tool.tag, style: context.texts.code),
               const SizedBox(height: 16),
               Row(
                 children: <Widget>[
@@ -157,8 +157,8 @@ class _ToolDetailsBody extends StatelessWidget {
                       label: 'Zona atual',
                       value: tool.zoneId == null ? 'Fora de cobertura' : zone.name,
                       valueColor: tool.zoneId == null
-                          ? AppColors.missing
-                          : zone.accent,
+                          ? context.colors.missing
+                          : zone.accentIn(context.colors),
                     ),
                   ),
                   Expanded(
@@ -214,13 +214,13 @@ class _ToolDetailsBody extends StatelessWidget {
                     ? '—'
                     : Fmt.isoDate(tool.nextMaintenance!),
                 valueColor:
-                    tool.maintenanceOverdue ? AppColors.maintenance : null,
+                    tool.maintenanceOverdue ? context.colors.maintenance : null,
               ),
               if (tool.maintenanceOverdue)
                 _SpecRow(
                   label: 'Atraso de manutenção',
                   value: '${tool.maintenanceDaysLate} dias',
-                  valueColor: AppColors.maintenance,
+                  valueColor: context.colors.maintenance,
                 ),
             ],
           ),
@@ -228,7 +228,7 @@ class _ToolDetailsBody extends StatelessWidget {
         const SizedBox(height: 14),
         SectionCard(
           title: 'Histórico da ferramenta',
-          trailing: Text('${history.length}', style: AppText.label),
+          trailing: Text('${history.length}', style: context.texts.label),
           child: history.isEmpty
               ? const EmptyState(
                   icon: Icons.history,
@@ -239,7 +239,7 @@ class _ToolDetailsBody extends StatelessWidget {
                     for (int i = 0; i < history.length; i++) ...<Widget>[
                       MovementRow(movement: history[i], showDay: true),
                       if (i != history.length - 1)
-                        const Divider(color: AppColors.border),
+                        Divider(color: context.colors.border),
                     ],
                   ],
                 ),
@@ -279,7 +279,7 @@ class _ActionBar extends StatelessWidget {
     final String user = _user(context);
     final Zone? destination = await showModalBottomSheet<Zone>(
       context: context,
-      backgroundColor: AppColors.surface,
+      backgroundColor: context.colors.surface,
       builder: (BuildContext context) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -287,14 +287,14 @@ class _ActionBar extends StatelessWidget {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-              child: Text('REGISTRAR MOVIMENTAÇÃO PARA', style: AppText.labelStrong),
+              child: Text('REGISTRAR MOVIMENTAÇÃO PARA', style: context.texts.labelStrong),
             ),
             ...kZones.map(
               (Zone zone) => ListTile(
                 enabled: zone.id != tool.zoneId,
-                leading: StatusDot(color: zone.accent, size: 9),
+                leading: StatusDot(color: zone.accentIn(context.colors), size: 9),
                 title: Text(zone.name, style: AppText.value),
-                subtitle: Text(zone.description, style: AppText.codeMono),
+                subtitle: Text(zone.description, style: context.texts.code),
                 onTap: () => Navigator.of(context).pop(zone),
               ),
             ),
@@ -344,7 +344,7 @@ class _ActionBar extends StatelessWidget {
           child: _ActionButton(
             icon: Icons.wifi_tethering,
             label: 'Localizar',
-            color: AppColors.primary,
+            color: context.colors.primary,
             onTap: () => _locate(context),
           ),
         ),
@@ -353,7 +353,7 @@ class _ActionBar extends StatelessWidget {
           child: _ActionButton(
             icon: Icons.swap_horiz,
             label: 'Mover',
-            color: AppColors.available,
+            color: context.colors.available,
             onTap: () => _move(context),
           ),
         ),
@@ -362,7 +362,7 @@ class _ActionBar extends StatelessWidget {
           child: _ActionButton(
             icon: inMaintenance ? Icons.task_alt : Icons.build_outlined,
             label: inMaintenance ? 'Concluir' : 'Manutenção',
-            color: AppColors.maintenance,
+            color: context.colors.maintenance,
             onTap: () => _maintenance(context),
           ),
         ),
@@ -434,7 +434,7 @@ class _SpecRow extends StatelessWidget {
           Expanded(
             child: Text(
               label,
-              style: AppText.caption.copyWith(color: AppColors.textSecondary),
+              style: context.texts.caption.copyWith(color: context.colors.textSecondary),
             ),
           ),
           const SizedBox(width: 10),

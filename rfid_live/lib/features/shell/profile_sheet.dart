@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/widgets/app_widgets.dart';
@@ -10,12 +10,13 @@ import '../../data/models/app_user.dart';
 import '../../data/models/zone.dart';
 import '../../state/auth_controller.dart';
 import '../../state/plant_controller.dart';
+import '../../state/theme_controller.dart';
 
 /// Painel de perfil, status das antenas e ajustes do modo ao vivo.
 Future<void> showProfileSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
-    backgroundColor: AppColors.surface,
+    backgroundColor: context.colors.surface,
     isScrollControlled: true,
     builder: (BuildContext context) => const _ProfileSheet(),
   );
@@ -43,11 +44,11 @@ class _ProfileSheet extends StatelessWidget {
                 children: <Widget>[
                   CircleAvatar(
                     radius: 24,
-                    backgroundColor: AppColors.primary.withValues(alpha: 0.18),
+                    backgroundColor: context.colors.primary.withValues(alpha: 0.18),
                     child: Text(
                       user.initials,
-                      style: const TextStyle(
-                        color: AppColors.primary,
+                      style: TextStyle(
+                        color: context.colors.primary,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -59,11 +60,11 @@ class _ProfileSheet extends StatelessWidget {
                       children: <Widget>[
                         Text(user.name, style: AppText.cardTitle),
                         const SizedBox(height: 3),
-                        Text(user.email, style: AppText.codeMono),
+                        Text(user.email, style: context.texts.code),
                         const SizedBox(height: 6),
                         InfoPill(
                           label: user.role,
-                          color: AppColors.primary,
+                          color: context.colors.primary,
                           icon: Icons.badge_outlined,
                         ),
                       ],
@@ -72,16 +73,16 @@ class _ProfileSheet extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 18),
-              const Divider(color: AppColors.border),
+              Divider(color: context.colors.border),
               const SizedBox(height: 10),
               Row(
                 children: <Widget>[
                   Expanded(
-                    child: Text('MODO AO VIVO (RFID)', style: AppText.labelStrong),
+                    child: Text('MODO AO VIVO (RFID)', style: context.texts.labelStrong),
                   ),
                   Switch(
                     value: plant.liveEnabled,
-                    activeThumbColor: AppColors.primary,
+                    activeThumbColor: context.colors.primary,
                     onChanged: (bool value) => plant.setLiveEnabled(value),
                   ),
                 ],
@@ -90,10 +91,14 @@ class _ProfileSheet extends StatelessWidget {
                 plant.liveEnabled
                     ? 'Leituras das antenas chegam a cada ${PlantController.tickInterval.inSeconds}s.'
                     : 'Simulação pausada — os dados permanecem congelados.',
-                style: AppText.caption.copyWith(color: AppColors.textMuted),
+                style: context.texts.caption.copyWith(color: context.colors.textMuted),
               ),
               const SizedBox(height: 18),
-              Text('ANTENAS DA PLANTA', style: AppText.labelStrong),
+              Text('APARÊNCIA', style: context.texts.labelStrong),
+              const SizedBox(height: 10),
+              const _ThemeModePicker(),
+              const SizedBox(height: 18),
+              Text('ANTENAS DA PLANTA', style: context.texts.labelStrong),
               const SizedBox(height: 10),
               ...plant.antennas.map(
                 (Antenna antenna) => _AntennaRow(antenna: antenna),
@@ -101,7 +106,7 @@ class _ProfileSheet extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'Última sincronização: ${Fmt.clock(plant.lastSync)}',
-                style: AppText.codeMono,
+                style: context.texts.code,
               ),
               const SizedBox(height: 18),
               OutlinedButton.icon(
@@ -111,8 +116,8 @@ class _ProfileSheet extends StatelessWidget {
                   navigator.pop();
                 },
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.missing,
-                  side: BorderSide(color: AppColors.missing.withValues(alpha: 0.4)),
+                  foregroundColor: context.colors.missing,
+                  side: BorderSide(color: context.colors.missing.withValues(alpha: 0.4)),
                 ),
                 icon: const Icon(Icons.logout, size: 18),
                 label: const Text('Sair da conta'),
@@ -133,8 +138,8 @@ class _AntennaRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Color color = antenna.lowBattery
-        ? AppColors.warning
-        : (antenna.online ? AppColors.available : AppColors.missing);
+        ? context.colors.warning
+        : (antenna.online ? context.colors.available : context.colors.missing);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -147,7 +152,7 @@ class _AntennaRow extends StatelessWidget {
               style: AppText.value,
             ),
           ),
-          Text('${antenna.readsToday} leituras', style: AppText.codeMono),
+          Text('${antenna.readsToday} leituras', style: context.texts.code),
           const SizedBox(width: 10),
           Icon(
             antenna.battery <= 20
@@ -162,10 +167,44 @@ class _AntennaRow extends StatelessWidget {
             child: Text(
               '${antenna.battery}%',
               textAlign: TextAlign.right,
-              style: AppText.codeMono.copyWith(color: color),
+              style: context.texts.code.copyWith(color: color),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Escolha entre seguir o sistema, claro ou escuro.
+class _ThemeModePicker extends StatelessWidget {
+  const _ThemeModePicker();
+
+  static const Map<ThemeMode, String> _labels = <ThemeMode, String>{
+    ThemeMode.system: 'Sistema',
+    ThemeMode.light: 'Claro',
+    ThemeMode.dark: 'Escuro',
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeController theme = context.watch<ThemeController>();
+    return SizedBox(
+      width: double.infinity,
+      child: SegmentedButton<ThemeMode>(
+        segments: _labels.entries
+            .map(
+              (MapEntry<ThemeMode, String> entry) => ButtonSegment<ThemeMode>(
+                value: entry.key,
+                label: Text(entry.value,
+                    style: const TextStyle(fontSize: 12)),
+              ),
+            )
+            .toList(),
+        selected: <ThemeMode>{theme.mode},
+        showSelectedIcon: false,
+        onSelectionChanged: (Set<ThemeMode> selection) =>
+            theme.setMode(selection.first),
       ),
     );
   }
